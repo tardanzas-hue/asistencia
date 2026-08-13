@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Tardanzas — Esc. 4076</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0b1a0e;
+    --surface: #112016;
+    --surface2: #172b1c;
+    --border: #1e4028;
+    --accent: #2e8b47;
+    --accent2: #1a6b32;
+    --warn: #f59e0b;
+    --success: #4ade80;
+    --text: #ecfdf0;
+    --text2: #86b898;
+    --text3: #4a7a5a;
+    --red: #f87171;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, #0d2a14 0%, #0b1a0e 70%);
+  }
+
+  .loginBox {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 380px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .loginBox .logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .loginBox .logo .icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .loginBox h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .loginBox p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  .formGroup { margin-bottom: 16px; }
+
+  .formGroup label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+  }
+
+  .formGroup input, .formGroup select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .formGroup input:focus, .formGroup select:focus {
+    border-color: var(--accent);
+  }
+
+  .formGroup select option { background: var(--surface2); }
+
+  .btnPrimary {
+    width: 100%;
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    margin-top: 8px;
+  }
+
+  .btnPrimary:hover { opacity: .9; }
+  .btnPrimary:active { transform: scale(.98); }
+
+  .loginError {
+    background: rgba(255,77,109,.12);
+    border: 1px solid rgba(255,77,109,.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--red);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  /* ── APP ── */
+  #app { display: none; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .headerLeft { display: flex; align-items: center; gap: 12px; }
+
+  .headerLeft .hicon {
+    width: 40px; height: 40px;
+    background: #fff;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; overflow: hidden;
+  }
+
+  .headerLeft h2 { font-size: 16px; font-weight: 700; }
+  .headerLeft span { font-size: 12px; color: var(--text2); }
+
+  .headerRight { display: flex; align-items: center; gap: 12px; }
+
+  .userBadge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .userBadge strong { color: var(--accent); }
+
+  .btnLogout {
+    background: rgba(255,77,109,.1);
+    border: 1px solid rgba(255,77,109,.25);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--red);
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btnLogout:hover { background: rgba(255,77,109,.2); }
+
+  main { padding: 28px; max-width: 1200px; margin: 0 auto; }
+
+  /* ── STATS ── */
+  .statsRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .statCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .statCard .label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+  }
+
+  .statCard .value {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .statCard .value.accent { color: var(--accent); }
+  .statCard .value.warn { color: var(--warn); }
+  .statCard .value.red { color: var(--red); }
+  .statCard .value.success { color: var(--success); }
+
+  /* ── SEARCH ── */
+  .searchBar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .searchBar .formGroup { margin-bottom: 0; }
+
+  .btnSearch {
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* ── RESULTS ── */
+  .resultsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .alumnoCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+
+  .alumnoCard:hover { border-color: var(--accent); background: var(--surface2); }
+  .alumnoCard.selected { border-color: var(--warn); background: rgba(255,107,53,.06); }
+  .alumnoCard.added { border-color: var(--green); background: rgba(34,197,94,.06); opacity: .6; pointer-events: none; }
+
+  .alumnoAvatar {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1a4028, #0f2a1a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .alumnoInfo { flex: 1; min-width: 0; }
+
+  .alumnoInfo .nombre {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .alumnoInfo .meta {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .cardAction {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .cardAction.add { background: rgba(79,124,255,.15); color: var(--accent); }
+  .cardAction.added { background: rgba(34,197,94,.15); color: var(--green); }
+
+  /* ── TARDANZAS LIST ── */
+  .tardanzasSection {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .tardanzasSection .secHeader {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .secHeader h3 { font-size: 15px; font-weight: 700; }
+
+  .tardanzasList { list-style: none; }
+
+  .tardanzasList li {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(42,48,80,.5);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: fadeIn .3s ease;
+  }
+
+  .tardanzasList li:last-child { border-bottom: none; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+  .tardNum {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(255,107,53,.15);
+    color: var(--warn);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tardInfo { flex: 1; min-width: 0; }
+  .tardInfo .nombre { font-size: 13px; font-weight: 600; }
+  .tardInfo .sub { font-size: 11px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+  .tardTime {
+    font-size: 12px;
+    color: var(--warn);
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+  }
+
+  .btnRemove {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: rgba(255,77,109,.12);
+    border: none;
+    color: var(--red);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .btnRemove:hover { background: rgba(255,77,109,.25); }
+
+  .emptyState {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  /* ── ACTIONS ── */
+  .actionsRow {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btnAction {
+    flex: 1;
+    min-width: 160px;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .btnAction:active { transform: scale(.98); }
+  .btnAction:hover { opacity: .9; }
+
+  .btnWa { background: #25d366; color: #fff; }
+  .btnEmail { background: var(--accent); color: #fff; }
+  .btnClear { background: rgba(255,77,109,.15); color: var(--red); border: 1px solid rgba(255,77,109,.2); }
+  .btnExport { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btnSheets { background: linear-gradient(135deg, #1a73e8, #1557b0); color: #fff; }
+  .btnSheets:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+  /* ── SHEETS CONFIG PANEL ── */
+  .sheetsConfig {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .sheetsConfig label {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
+  }
+  .sheetsConfig input {
+    flex: 1; min-width: 200px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 9px 12px;
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; outline: none;
+  }
+  .sheetsConfig input:focus { border-color: #1a73e8; }
+  .sheetsStatus {
+    font-size: 12px; font-family: 'DM Mono', monospace;
+    padding: 5px 10px; border-radius: 8px;
+  }
+  .sheetsStatus.ok   { background: rgba(74,222,128,.12); color: var(--success); border: 1px solid rgba(74,222,128,.25); }
+  .sheetsStatus.err  { background: rgba(248,113,113,.12); color: var(--red);     border: 1px solid rgba(248,113,113,.25); }
+  .sheetsStatus.wait { background: rgba(245,158,11,.12);  color: var(--warn);    border: 1px solid rgba(245,158,11,.25); }
+
+  /* ── MODAL ── */
+  .modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 20px;
+  }
+
+  .modal.open { display: flex; }
+
+  .modalBox {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 32px 100px rgba(0,0,0,.6);
+    animation: popIn .25s ease;
+  }
+
+  @keyframes popIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+
+  .modalBox h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .modalBox p { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+
+  .previewBox {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text2);
+    white-space: pre-wrap;
+    max-height: 260px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .modalActions { display: flex; gap: 10px; }
+
+  .btnModalPrimary {
+    flex: 1;
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btnModalClose {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .3s ease;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .toast.show { transform: none; opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .statsRow { grid-template-columns: 1fr 1fr; }
+    .searchBar { grid-template-columns: 1fr; }
+    main { padding: 16px; }
+  }
+
+  /* ── DIRECTOR BADGE ── */
+  .directorBadge {
+    background: linear-gradient(135deg, rgba(124,92,255,.2), rgba(79,124,255,.2));
+    border: 1px solid rgba(124,92,255,.4);
+    color: var(--accent2);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .clock {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+
+  /* ── SCANNER ── */
+  .scannerSection {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .scannerHeader {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .scannerHeader h3 { font-size: 15px; font-weight: 700; }
+
+  .scannerControls { display: flex; gap: 8px; align-items: center; }
+
+  .btnScanner {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btnScanner:hover { opacity: .85; }
+  .btnScanner.start { background: var(--success); color: #000; }
+  .btnScanner.stop  { background: var(--red); color: #fff; }
+
+  .scannerBody { padding: 20px; }
+
+  .scannerViewport {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    max-width: 400px;
+    margin: 0 auto;
+    display: none;
+  }
+
+  .scannerViewport.active { display: block; }
+
+  #scannerVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .scannerOverlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+
+  .scannerFrame {
+    width: 65%;
+    aspect-ratio: 1;
+    border: 2px solid var(--success);
+    border-radius: 12px;
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
+    position: relative;
+  }
+
+  .scannerFrame::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--success);
+    animation: scanLine 2s linear infinite;
+    box-shadow: 0 0 8px var(--success);
+  }
+
+  @keyframes scanLine {
+    0%   { top: 0; }
+    50%  { top: calc(100% - 2px); }
+    100% { top: 0; }
+  }
+
+  .scannerStatus {
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  .scannerStatus.ok   { color: var(--success); }
+  .scannerStatus.err  { color: var(--red); }
+  .scannerStatus.warn { color: var(--warn); }
+
+  .scannerIdle {
+    padding: 32px 20px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  .scannerIdle .bigIcon { font-size: 48px; margin-bottom: 12px; }
+
+  .manualDni {
+    display: flex; gap: 8px; margin-top: 16px; max-width: 400px; margin-left: auto; margin-right: auto;
+  }
+
+  .manualDni input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    outline: none;
+  }
+  .manualDni input:focus { border-color: var(--accent); }
+
+  .manualDni button {
+    background: var(--accent);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .scanResult {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+    align-items: center;
+    gap: 14px;
+    animation: fadeIn .3s ease;
+  }
+
+  .scanResult.show { display: flex; }
+  .scanResult .srInfo { flex: 1; }
+  .scanResult .srName { font-size: 14px; font-weight: 700; }
+  .scanResult .srMeta { font-size: 12px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+  .btnAddNow {
+    background: var(--warn);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .logoImg {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+    padding: 6px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(46,139,71,0.4);
+  }
+
+  .loginBox h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+
+  .loginBox .school-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+    font-style: italic;
+  }
+
+  /* Green scan frame */
+  .scannerFrame {
+    border-color: #4ade80 !important;
+  }
+  .scannerFrame::before {
+    background: #4ade80 !important;
+    box-shadow: 0 0 8px #4ade80 !important;
+  }
+
+  .cameraWarning {
+    background: rgba(245,158,11,.1);
+    border: 1px solid rgba(245,158,11,.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--warn);
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .cameraWarning a { color: var(--warn); }
+
+  /* ── ZONA MODAL ── */
+  .zonaModal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.65);
+    display: none; align-items: center; justify-content: center; z-index: 300;
+  }
+  .zonaModal.open { display: flex; }
+  .zonaBox {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 24px; width: 340px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  }
+  .zonaBox h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .zonaBox p  { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+  .zonaOpts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .zonaOpt {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 14px;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    text-align: left; transition: border-color .15s, background .15s;
+  }
+  .zonaOpt:hover { border-color: var(--accent); background: #1a3520; }
+  .zonaOtroRow { display: flex; gap: 8px; }
+  .zonaOtroInput {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+  }
+  .zonaOtroInput:focus { border-color: var(--accent); }
+  .zonaOtroBtn {
+    background: var(--accent); border: none; border-radius: 10px;
+    padding: 10px 16px; color: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; white-space: nowrap;
+  }
+  .zonaCancel {
+    width: 100%; margin-top: 10px; background: transparent;
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 9px; color: var(--text2);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer;
+  }
+  .zonaCancel:hover { border-color: var(--red); color: var(--red); }
+
+
+  /* Header subtle green glow */
+  header {
+    border-bottom: 1px solid #1e4028;
+    background: linear-gradient(180deg, #112016 0%, #0f1c12 100%);
+  }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zxing-js/0.18.6/zxing.min.js"></script>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="loginBox">
+    <div class="logo">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUREBAVFRAPFRcWFRUVFxcVFhgYFRUWGBUVFRYYHSggGxolHhUWITEjJSorMC4uFx8zODMtNygtLisBCgoKDg0OGhAQGi0mHyY1LS0uLjAvLS0rLS8tLS0uLS0vLS0tLS0tLS0tLi0tLS0tLS0tLS0vLS0tLS0tLS0tK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAABgcDBAUBAv/EAEAQAAEDAgMFBAcGBQMFAQAAAAEAAgMEEQUSIQYxQVFhEyJxgQcyQpGhscEUI1JygrIzYpLR8BVDwiRTVHOiFv/EABkBAQADAQEAAAAAAAAAAAAAAAACAwQBBf/EACsRAAICAQMEAQMDBQAAAAAAAAABAgMRBBIhEzEyQWEiUYEUQnEFFSOh0f/aAAwDAQACEQMRAD8AvBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREARF4SgOXtJjbKSEyuF3E5WN/E4626DQklRPYzEq6pnM8kv/AE7bhzSAGkkXDWNG4i4N+XE3XE2vxY11U2KI3iY7JHyJcQHP8L/AdVYWHUzY2tjjaAxgsAPmep33VSe6XwjHCTutbT+lf7Z2Wm69XzGNF9K02BERAEREAREQBERAEREAREQBERAEREARFwto9p4aQWcc0xF2xt39C4+yFxvHcjKSiss69TVMjGaR7WN5uIaPeVFcW9INPES2JjpiOIIazydqT4gKA1lVUYhPcgvefVaPVY3pfcOZKlOD7GxMANQe0f8AhBIYOmmrlVvlLxMavtteK1hfdmJ/pGqHnLFTMDr7rukPuAC+f/0uLWzdiA29tYS0XPDvG6lTjFTROeGNjijbc5WgaDkBvKrueabEqi2oZwG9sbL6k8L6+a5LcvfJXb1IYTm236XB1a7H8XA7zHxhupLYfmSCufHtdiDhZszjbfaNpPnZqsiniIAa0WDQAOgAsFkMLlPpv7lz0s3+9lZx7bV7dDNc/wAzGXHuAWriO1FXO0tknOQ6FrQGA9DlFyrGxLBIpge1ia4n2rWd5OGqq3GaRsM8kTHFzY3Wud+4XGnI6eSqsUo+zJqIW1LmWUa9NO6N7ZGGzmEOHiN2illB6QJmevDG/XeCWacraqHIq4zcexmrunX4vBZ7PSRT8YZh/Qf+S+p/SPTD1IpXeTW/Nyq5FPrSL/11pYFV6Sz/ALVKLc3v+gb9Vz5vSLVEd1kTeuVx+blD0UepL7lb1Vr/AHEnpcdrq2ZkH2os7QnVoDALNLie7qdBuurYgdoBe9hv59VXexeCZMtQ+/aOBytOmUHS/iR8CrBpWm2q0VppZZ6mlhJRzN8s2ERFYaQiIgCIiAIiIAiIgCIufjeKx0sTppDo3c3i53Bo6lGzjaSyzn7V7Tso2gWzzPF2s6ficeA+fvVf4Xgc9bIZ5yWxyHM55Fi+/CMHh13DqurgeEvrZTW1guxx7jDudbcP/WN3X33m0cObwVW3fy+xkVbve6fj6RoYdhscTQyFga3jbeerjvJ8V1YKTmtmGABcfbPGfstM5zTaWTuR9CRq7yFz42VraijVJxrjn0iI+kfG2ucKSI91hvKRuLh6rPLeepHJbPo/pMsDpPamf8GaD4lyr9xvqTqeJVr7HQZaaEWtdgcf1d76rPW908nnaWTtuc2SWljsFmsjQvmaVrGl7iA1gJJO4AaklaD02c3aTE201O+YgZgLMB4vOjR4X39AVU2AUTqmoGe7hfPITx1vr4nTzW1tftG6sks3SCMns28Twzu6n4BTHZbBhBGGnWSSznnrbRo6D53VHnL4R52f1F3HijQxbZKOUF0QEcnQd0+LRu8QoNXUMkLssrC08L7jbkdxV4xUwstHEMLY8WewObe9nC4vz1U51J9i27RxnzHhlJorLxTZGGU3DTG7nHYX8W2stA7EQ2tnkvzu35ZVS6ZGN6G1PjBDMPonzSCNg1dx4AcXHorFwfZ+KIDIy7ravOpP9vJebPbONp81nFzn2u4i2g3ABSylpwArq69q5Nul0yrWZLk16Sksuk0WQBeqw1hERAEREAREQBERAEREBq4nXsgifNIbNjF+p5NHUnQeKrWlM2LVGaY5aeG12tuAASbNH8x1u7l5LZ9I+LmWVtHFqIyMwHtSO9VvkD7z0Uk2fwoU8TYhbNve4e047z4DQDoFV5yx6Rjbd1m39q7/ACzqU8IsGtADWgAAbgBoAF0I2WXzBHYLKrTZ2BKp3bHFXVdUWs1ZG7sohzN7F3m74AKX+kHaPsWGmid99KO8RvYw/V27w15KNbDYOHu+0PvaJ1oxwzAauPhfdz8FTN7ntRg1EnbNVR/Jx8WwoQzNgzZiQzMbW7zyQQ3paytrC4Q0BoGjQAPAaBV3tc3s6+Nzj3bRPPQB5B/apHhW2sT6hsDY3ZJHZWyEjed3ctu8/JINRbOaeUKpyT45wibqsfSJtEZHmliP3cZ+8I9p49nwHz8FOdp8TFPTSS37wGVn53aN/v5Ko8Dwd9S8gGzW6vedbX5c3HVLW/FEtXOTxXHuzb2Ow7tZw8tvHD3jyzewPfr5K1qGHiuTg2GNiaGRts0e8niT1UihZYKcI7UX6enpQx7MiEItDFsXhpm555A0HcN5ceTQNSp5Lm0llm26IFfBpQuFg+2lNUS9i0PY53q5wAHG24WJ18VJAuJp9jkLIzWYvJhbTgLKAvUXSQREQBERAEREAREQBERAFzsexZlLC6Z/s6NHFzj6rR/nAroqrfSBWOnrG0zDdseVoHDtH2uT5ED3qE5bUUX2dOGV39GTYOgdI+SslF3EkMJ4vdcyOHhe3mVYNJDxWhhdE2NjImerGAB15nzNz5rtRtsF2EdqJU19OCXs+lgralsUbpHmzI2lxPQC6zqt/SVj2Z32OM91lnSkcXb2s8tCetuSTltWRdaq4OTIbida6eV8z/WlcXW5ch5Cw8l3INr3RRtjggYwMFgXEu8TbTUnVRoAnQak6BS7DNjtQ6d9xxY248i4/RZob2+DyKFbKTcPyyM11dJO/PK8vebC5toBuAA0A1PvU92c2Yjge2R57SVuoJFmtPNo59SuRt/Rhghcxga2z290AD2SN3mpvs/K2aKORpuHtB89xB63BVkILc8mvT0pWyU+WiMekzELiKmbqSe0cB5tYPO7vcF2sAwkQxMiA71rvPEuOrr2323DoAofXkT4sRvaJg3yiGv7CrNo2a3U4cyci6j67J2P+EZ6eAALOijm1+07KNmVtnVDx3W8APxv6dOPvU20llmmc4wW5mbajaWOjZr3pn+pHfX8zuTVUeJ4jJUSOllcXOcetmj8LRwHRdik2cq6omeV2XtNc8l8zuRDRw9w5LFiWy8sEbpXPYWstoL31IHEdVnnulzjg8q93WrOPpOVhsmWaJ17ZZGG/Kzwr1p5LhUbhEOeeJvORvuBBPwBV2UCnR2Zf/T/ABkbiIiuPQCIiAIiIAiIgCIiAIiIDwlVPs0z7RiEk+9rXSS34d5xDB/9XH5VPts8Q7CklcDZ7xkZ+Z+nwFz5KP7BYaI6cS278+p/K0kMA+J81XLmSRltW+2MftyS+iZxW4sVO2wWVWGo5W0uMikgdKRd3qsbzcd3kNSegVeYVsu+qYameVzXTEuHdBLr+2b7gTuW/jMv+pV7YGm9NTXzEcbEdoQeps0eF1No4b2AFgNABuA5AKvG989jJsV8234rhfyRHCtk44nh5LnubuzWAHUAcfFS2ko+a3GUoCzNbZTSS7GmFcYLEUQ/0k0QNIH8YpGnyddp/cFq+jOoPYvaT6kpsOQc1p+d139uIc9DOPwszf0EO+ir/ZCvMMVW6+jY2kfmOdrfeSPcq5cTyYrHs1Kfwe7Gt7WufKRewkkv1c6w/eVadG3RVt6No+/MeAawe8k/RWZBo253LtXiW6Jf4s/fJp4/i7KWF0r9baNaN7nHc0f5wUM2dwR1Q811aMzpTmYwjTo5w/Da2Uea8rJP9UrMrb/YqXeeDjfX+q1vyi/FTeOO+gGg4LqW559HYrrT3PxXb5+TG2EuSqw9pYQ8AsI7wOotxuuixllG/SDifY0jmtPfqD2Y5gEEvPuFv1BSk8LJdZJRg2yDbGYf2lSZR/DgJI6l2YNHu18la1E3RRHYOgyUrXkd6dxefC+VvlYX/UpnC2wUa1iJVpYbK188mREXI2pxf7LTulAu64awfzOvYnoN/kpN4L5SUVlnXRURVV09RKHvkc6V5ABvaxJ7obbd5K7qEkMa1xu5rQCeZAFyownuKKNQrc4XY2URFM0BERAEREAREQFf+lWoJ+zwN1Li59uoytZ+5ylWH0wY1kbd0bWtH6QB9FB/SbMW1cJ4RxtcPHtHE/tCn2HSteA9pu14DmnmCLhVx8mZaWndP8G+FGNv8c+z05Yw2mqAWtsdWt9p/TTQHmVIa6oEcb5Hbo2ucf0gn6Krdn4pK+rNTUd5sZDnA+rf/bjA5Dfbob79ezl6XdktRY1iEe7JHsNhXYQZ3C0s9nG+8NHqN+Z/V0Uwp2WC1qdlyt4BSSwsF1cFCKij1ERdJGljVIZoJYgQDLG9gJva7mkC9lV1dgUtLSSGW2eWSNpDTcBrcx39Tb3BW6Qof6SmWpPGVn/I/RV2RWMmXU1xcXP2kcb0avFpm8czD5WcPoupt7jLmRto4b9tU2BsbENJsG/qOnhdRTYOs7OpNzZj43Zr7hl72Y+AB966+zcLqysfXSN+6YT2YdfeBZgA3d0a+JChF5gooz1WOVMa493x+CV4FhbaaFsLd41eebj6x+g6ALtwssFgpmcVtq/twejFKKwjxzgBc6AKptoK04jXNjjJ7JpyM/KDeSTzsSOgCs7F6LtoZIsxZ2jS3M3eLqN4DswykJIdnkdpnIAsOTRrbrqq5xcsL0Z7652NRXj7O7Qwhoa1os1gAA6AWHyXTC16WOwWwrDSFWvpTriZIoAe6wdo4fzG4br4X96sklUltHWmpq5Ht7we/LHbW7W91lvG1/NVWv6cGLXTxXt+5zqZ7g9pZfOHAttvvfS3mrxw8qD7N7MiK0koDpdCBwZ4cz1U7omWXaouK5JaOmVcW5ezbREVhrCIiAIiIAiIgKz9Kv8AGh59m79wt9VIPR/MTSR39nM3yD3WW/tDs/BUlrpWkuYCAQ4t0JBN7eCzYZRiMBjBlYwWAHJQUGptmaFMldKfpnTnjDmlrgC1wIIO4g7wVyMPwiOBvZwsytJzHUkkm2pJ14Bdtc+nxamkEjo6iJwpyRKWvaRGW3zCSx7trHfyKmaMLOTchZYLItDDMapqkONNUwzBnrdlIx+Xlmyk2XmG45S1DnMp6mGV0frtjkY8t1t3g0m2qHToIvCVoUOO0s2cQ1MMnYfxMkjXZN/r2Pd9U7+RQHQUJ9Kk1qeJl9XS3t0ax1/i4KSDHqQwmpFVD9mBsZu0Z2QN8ti+9t5A37yoRtzLFWGGWCpgdAwFnaCVhjL3uADA4G2Y2Gm/coWePBn1Wek0iMwRiKmdKT95UExMH8gsZHW62DfNWbs9RdlBHFbVrRf8x1d8SVBsWw8M+zCeaKGKBkbXPmcI253HO9oLjqbKwziVPFEJ5aiJlO62WVz2iM5vVs8mxuo1RwVaWva22vj/AKdWNtgvtaUuL07YftLp4m0xAImL2iOziA0572sSQPNasG1FC8Zo62nc0vbHdsrCM775GXB9Y2NhvNlabTrELH2IWKPEYXPkjbMwyU9jKwOBdHmF25xe7bgEi61otoqNzGSNq4DHLJ2UbxIwtfId0bXXsX9BqgOkAvVzKjaGjjDzJVwNEDgyQukYAx53Mfc6ONjodVvU1QyRjZI3NfG8BzXNIc1wIuC0jQg80BwNvcVNPSnIbSTns2nlcHMfcD5kKI7CYQCDUuGoJbGOWlnO+NvetXb/ABptROGRm8dPdoPNxPfI6aAeRUi9Hri6mAO5sjgPDQ/MlUpqVh58ZK3U/C7Epo6Xiug1tl5G2wX0rj0QiIhwIiIAiIgCIiA8c268awBfSFAc7aOsfDSzyxRukljjcY2NBc5z7dwADXfZVTs/gddR54n0Raytw2WOQxuM2aojbJI18lmDI53avbl114q5l6gKNwXZOrdBVRuhdHVyYXDDTlsfZRPjs10kcrv/ACLjIbnd0W3hlRmxPD+zw19CylZI0vex0TpbQHPShuW0jswLmm+oJO+6udeEICO4yZK7C5fs7JIpauneI2Sjs5GlzSA14v3Tw81A2SuOFS0lDhE9PWmGGkkc6Dsw4yOcyVwkbq9oHaOLju7QHiVb6ICjsZwOsjocToRQOY2f7LUQMhLp2XD4o5miQMbd33Qda17X8TjrMMnbBVF9O41ZxGnkkjgiyxvZC45X0zeILb3ub338zduI1HZxSSf9tjnf0tJ+ip/Zdj5qlgc9xDSZHanXLr8XEKEpYaRnuu2SjFLlmfE6wOr4MQmoqh9IIHxCnMLXzQS9r674A46PY3LcX0I3LX/0KSOga6WCrhviE1TSxwRNqDSxvaezZNAbgtNzoNxdrbULUxauc6ole17gHPdbUjS9grN2Gxv7TDZ38WKzX346aP8AP5grkLMvBCjUxnJxPdnaaWbDI2YhTRiZ0R7SHI3ILE9n93awNgw24HwVcw7MTjBcPijpnxVZrYnSlsX3jcsstpZG21DQQe9pZXYisNZTc+GYhTuxloE1TPWNpIIp+yyZ87Xte8ZBlAY1xuRusLrLQ7NzsixChmoTHFJTx1NN2TzM1s0EbYwGS5G/eExxuta+/erfRAU9XYCIsLoXOhrG1mZ1S+WGAVD21MrLvdUwv9bMSGjTTKNV3cQ2imgw2CKZrY6+aICRjAGiJtrE5Ro02sAOBvyXf2w2oZSsLIyDUuHdbvy39t30HFVUO1qJdSXzTO3uOpJ5nkPgAqrLMcIw6rU4+iHdmxs/hpnma2142m7zuAaOF+u5WvhFI1jQ1jQ1jdwG4LmbP4SIYxGNTve7m7ifDkpPTxWClXDai3TUdKPPczBeoimaQiIgCIiAIiIAiIgCwVzyI3lvrNY4jxDTZZ18ytuCDuII96HH2IN6MqmR7JnyzPf3mjK5xdY2uXC+697eSnQKpXBcVfQzusMzGuMcjeYa4i4/mFjbz5q2cDxmGpjD4Xg29Zp0c3o5vBV1yTWDJpLU4bW+UdJERWGwIi18QrGQxvlkNmRtLj5cB1Q43jlkf9IeJCKkcy4z1HcaONtM58h8wo9sBhtmOnPrSHI38rTqR4n9qjOO4vLWT5yN5yxsG4AnujxJOpVn4LQiKOOIbo2gX5niffdUxe+WfsYapda5z9LsVptbh/YVL2j1ZPvG/qJuPI3WvgWMSUsnaR2NxZzTucL3sbbjyKtHajAGVMWUi0jQSx/EHkf5TxCqKqp3RvLJGlr2mxB/zd1VdkXF5Rl1NUqbN0fwW5hO2dJMwF0rYn8WSHLY9HHQjw+C6Eu0FI31qqEfrafkVRyLquZNa+eOUXBV7cUTN0xeeTGud8bW+KiWO7fzSgsp29kw+0bGQjpwb5X8VFm4fMRcQyEHiGO/sutg+y8spvLeNnUd8+AO7xKb5y4Qd99r2xRwwHSO4ukkIGpu5xOg1O8qwdmNnxAMztZnDU8Gj8I+pW5hOz8UNsjO9+N3ed7+HlZSSkpbKyurbyzVptJse6XLPujp7Bbi8AXqtNgREQBERAEREAREQBERAF4V6hQFHbTUxjq52Ef7jnDwecw+DlqUNY+F7ZYnFr2G4I+R5g8Qpp6TcKIe2paO6QGP6H2D4bx425qBrHNbZHg3RddjRZWFekaIi1TE5jvxM7zT1tvHhr4rvx7XUJF/tTB43B9xCpZFJXSLo66xLnktuv28o4x3HOldwDAbebnWCgO0m081YbO7kINxGDcXHFxsMx+S4S6GDYU+oflGjB67uQ/uVxzlLgjPUW3Pajq7E4YXy9s4dyL1er+Hu3+5WjQxrmYXRBoa1rbNaLABd6JlgtMI7Vg9SinpQwevbdcTGMGimFpIw62641Hgd4XdXhbdS79y1pNYZVg2HcJDmlHZX0sDnI5a6A9dVIcP2ehjtkibce0Rmd43Klb6UFfUdOAoqEUVQ09cOyOUyiWeKhXTDQvVMuMEdOAswC9RcAREQBERAEREAREQBERAEREAREQGnilE2WN0bxdrxYj/ADiqfx7Z+WmeRlLoie68C+nJ1txV2ELSqaW6hOCkUX6eNq57lElfdPC6Rwaxpc47gFcT8OH4R7l8RYYG+q0C/IAfJV9D5Mn9u58iC4bse9xvO7KPwt1Pmdw8rqa4ZhrY2hjGhrRwHzPMrpwUS3ooQFbGCj2NtVEKvFHzTw2CzoikWhERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQHmULzIOS+kQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAf//Z" class="logoImg" alt="Logo Escuela" />
+      <h1>Escuela 4076</h1>
+      <p class="school-sub">Arq. Carlos Thays · Control de Tardanzas</p>
+    </div>
+    <div class="formGroup">
+      <label>Usuario</label>
+      <select id="loginUser">
+        <option value="">— Seleccionar usuario —</option>
+        <option value="directivos">Directivos</option>
+        <option value="turno_manana">Preceptoría Turno Mañana</option>
+        <option value="turno_tarde">Preceptoría Turno Tarde</option>
+      </select>
+    </div>
+    <div class="formGroup">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" />
+    </div>
+    <button class="btnPrimary" onclick="login()">Ingresar</button>
+    <div class="loginError" id="loginError">Usuario o contraseña incorrectos.</div>
+    <div style="text-align:center; margin-top:18px;">
+      <a href="ayuda.html" style="color:var(--text3); font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:5px; transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text3)'">
+        ❓ ¿Necesitás ayuda?
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <header>
+    <div class="headerLeft">
+      <div class="hicon"><img src="data:image/jpeg;base64,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" style="width:28px;height:28px;object-fit:contain;border-radius:6px;" /></div>
+      <div>
+        <h2>Control de Tardanzas</h2>
+        <span>Esc. 4076 — Arq. Carlos Thays · <span class="dot"></span> En línea</span>
+      </div>
+    </div>
+    <div class="headerRight">
+      <span class="clock" id="clock">--:--</span>
+      <div class="userBadge">
+        <strong id="userLabel">—</strong>
+        <span id="rolBadge"></span>
+      </div>
+      <button class="btnLogout" onclick="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Stats -->
+    <div class="statsRow">
+      <div class="statCard">
+        <div class="label">Total alumnos</div>
+        <div class="value accent" id="statTotal">699</div>
+      </div>
+      <div class="statCard">
+        <div class="label">Tardanzas hoy</div>
+        <div class="value warn" id="statTard">0</div>
+      </div>
+      <div class="statCard">
+        <div class="label">Cursos</div>
+        <div class="value success" style="color:#4ade80">23</div>
+      </div>
+      <div class="statCard">
+        <div class="label">Fecha</div>
+        <div class="value" id="statDate" style="font-size:18px; color:var(--text2)">—</div>
+      </div>
+    </div>
+
+    <!-- Scanner QR / Código de barras -->
+    <div class="scannerSection">
+      <div class="scannerHeader">
+        <h3>📷 Lector QR / Código de Barras</h3>
+        <div class="scannerControls">
+          <span id="scannerStatusBadge" style="font-size:12px; color:var(--text3)">Cámara inactiva</span>
+          <button class="btnScanner start" id="btnStartScan" onclick="iniciarScanner()">▶ Activar cámara</button>
+          <button class="btnScanner stop" id="btnStopScan" onclick="detenerScanner()" style="display:none">⏹ Detener</button>
+        </div>
+      </div>
+      <div class="scannerBody">
+        <!-- Advertencia de contexto seguro -->
+        <div class="cameraWarning" id="cameraWarning">
+          ⚠ <strong>La cámara requiere HTTPS.</strong> Este archivo se abrió como <code>file://</code>, que está bloqueado por el navegador para acceder a la cámara por seguridad. Para usarla, abrí el archivo desde un servidor local o por HTTPS. Podés usar el <strong>ingreso manual de DNI</strong> como alternativa.
+        </div>
+        <!-- Viewport de cámara -->
+        <div class="scannerViewport" id="scannerViewport">
+          <video id="scannerVideo" autoplay muted playsinline></video>
+          <div class="scannerOverlay">
+            <div class="scannerFrame"></div>
+          </div>
+        </div>
+
+        <!-- Estado idle -->
+        <div class="scannerIdle" id="scannerIdle">
+          <div class="bigIcon">📷</div>
+          <div>Activá la cámara para escanear el DNI del alumno<br><span style="font-size:12px">Compatible con código de barras PDF417 (DNI) y QR</span></div>
+        </div>
+
+        <!-- Estado del último escaneo -->
+        <div class="scannerStatus" id="scannerStatusMsg"></div>
+
+        <!-- Resultado encontrado -->
+        <div class="scanResult" id="scanResult">
+          <div class="srInfo">
+            <div class="srName" id="srName">—</div>
+            <div class="srMeta" id="srMeta">—</div>
+          </div>
+          <button class="btnAddNow" onclick="agregarDesdeScanner()">+ Agregar tardanza</button>
+        </div>
+
+        <!-- Ingreso manual de DNI (fallback) -->
+        <div class="manualDni">
+          <input type="text" id="manualDniInput" placeholder="Ingresá DNI manualmente..." inputmode="numeric" />
+          <button onclick="buscarDniManual()">Buscar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buscar alumno -->
+    <div class="searchBar">
+      <div class="formGroup">
+        <label>Buscar por nombre</label>
+        <input type="text" id="searchNombre" placeholder="Ej: García, Luciana..." oninput="buscar()" />
+      </div>
+      <div class="formGroup">
+        <label>Buscar por DNI</label>
+        <input type="text" id="searchDni" placeholder="Ej: 52688..." oninput="buscar()" />
+      </div>
+      <button class="btnSearch" onclick="buscar()">🔍 Buscar</button>
+    </div>
+
+    <!-- Resultados búsqueda -->
+    <div class="resultsGrid" id="resultsGrid"></div>
+
+    <!-- Tardanzas del día -->
+    <div class="tardanzasSection">
+      <div class="secHeader">
+        <h3>⏰ Tardanzas registradas hoy</h3>
+        <span style="font-size:12px; color:var(--text2)" id="tardCount">0 alumnos</span>
+      </div>
+      <ul class="tardanzasList" id="tardanzasList">
+        <li style="list-style:none">
+          <div class="emptyState">Aún no se registraron tardanzas.<br>Buscá y seleccioná alumnos para agregarlos.</div>
+        </li>
+      </ul>
+    </div>
+
+    
+    <div style="display:none"><input type="text" id="gasUrl" /></div>
+    <div style="margin-bottom:8px"><span class="sheetsStatus" id="sheetsStatus" style="display:none"></span></div>
+
+    <!-- Acciones -->
+    <div class="actionsRow">
+      <button class="btnAction btnWa" onclick="abrirModal('wa')">📱 Enviar por WhatsApp</button>
+      <button class="btnAction btnEmail" onclick="abrirModal('email')">📧 Enviar por Email</button>
+      <button class="btnAction btnClear" onclick="limpiarTardanzas()">🗑 Limpiar lista</button>
+    </div>
+  </main>
+</div>
+
+<!-- Zona modal -->
+<div class="zonaModal" id="zonaModal">
+  <div class="zonaBox">
+    <h3>📍 Zona de procedencia</h3>
+    <p id="zonaAlumnoLabel">Seleccioná la zona del alumno</p>
+    <div class="zonaOpts">
+      <button class="zonaOpt" onclick="confirmarZona('F. L. Beltrán')">F. L. Beltrán</button>
+      <button class="zonaOpt" onclick="confirmarZona('Rodeo del Medio')">Rodeo del Medio</button>
+      <button class="zonaOpt" onclick="confirmarZona('Sta. Blanca')">Sta. Blanca</button>
+      <button class="zonaOpt" onclick="confirmarZona('Los Álamos')">Los Álamos</button>
+    </div>
+    <div class="zonaOtroRow">
+      <input type="text" class="zonaOtroInput" id="zonaOtroInput" placeholder="Otra zona..." />
+      <button class="zonaOtroBtn" onclick="confirmarZonaOtro()">Agregar</button>
+    </div>
+    <button class="zonaCancel" onclick="confirmarZona('')">Omitir zona</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modalBox">
+    <h3 id="modalTitle">Enviar lista de tardanzas</h3>
+    <p id="modalDesc">Revisá el mensaje antes de enviarlo.</p>
+    <div class="previewBox" id="modalPreview"></div>
+    <div class="modalActions">
+      <button class="btnModalClose" onclick="cerrarModal()">Cancelar</button>
+      <button class="btnModalPrimary" id="modalConfirmBtn" onclick="confirmarEnvio()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ <span id="toastMsg"></span></div>
+
+<script>
+// ══════════════════════════════
+// DATOS
+// ══════════════════════════════
+// Contraseñas hasheadas con SHA-256 (no se guardan en texto plano)
+const USERS = {
+  directivos:    { hash: 'fc0786345e536f804e44e29a4238ad7ded5af50b6ecec7495b6c2e0c7be4f4de', rol: 'Directivos', badge: 'director' },
+  turno_manana:  { hash: 'ca0e80c2283ba1cc40f8d1c2b00cba09c6e9f8a9745c0cb9d3d861f842e2c03b', rol: 'Preceptoría Turno Mañana', badge: '' },
+  turno_tarde:   { hash: '253ed418a63714a8f8850ff1086def57e9a16b3dd6998b3e520feca27a7fba1f', rol: 'Preceptoría Turno Tarde', badge: '' },
+};
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+const ALUMNOS = [{"dni":"52888708","nombre":"ABALLAY MORALES, ALEXANDER ADRIÁN","curso":"1° 1º"},{"dni":"52520910","nombre":"ALANIZ PEREZ, JEREMY TOBIAS JOEL","curso":"1° 1º"},{"dni":"53152725","nombre":"ALVARADO TEJERINA, RUTH ABIGAIL","curso":"1° 1º"},{"dni":"51469796","nombre":"AMAYA ACOSTA, MAURO LIONEL","curso":"1° 1º"},{"dni":"52521559","nombre":"CACERES CANTO, JONATHAN JEREMY","curso":"1° 1º"},{"dni":"52685824","nombre":"CACERES PEREYRA, LOGAN GONZALO","curso":"1° 1º"},{"dni":"52103808","nombre":"CALDERON RODRIGUEZ, Julieta  Yamila","curso":"1° 1º"},{"dni":"52297103","nombre":"CAMPILLAY, ALEJO VALENTINO","curso":"1° 1º"},{"dni":"52941893","nombre":"CASTILLO, SOFIA DAMARIS","curso":"1° 1º"},{"dni":"50174251","nombre":"CAYO VEDIA, NELSON LAUTARO","curso":"1° 1º"},{"dni":"52685540","nombre":"CISNEROS, GIULIANA CELESTE","curso":"1° 1º"},{"dni":"52934507","nombre":"CONDE CALIZAYA, ALEX","curso":"1° 1º"},{"dni":"52293838","nombre":"CORZO, KIARA CONSUELO","curso":"1° 1º"},{"dni":"52685517","nombre":"CRUZ, MARIANA PAULINA","curso":"1° 1º"},{"dni":"52936079","nombre":"GUARDIA LUJAN, YAIR BENJAMIN","curso":"1° 1º"},{"dni":"52937099","nombre":"HINOJOSA ROJAS, YOSELIN LISBETH","curso":"1° 1º"},{"dni":"52941501","nombre":"JURADO QUESADA, LAUTARO FRANCISCO","curso":"1° 1º"},{"dni":"52940806","nombre":"LAGOS, Thiago Samir","curso":"1° 1º"},{"dni":"52812367","nombre":"LOPEZ, BIANCA AGOSTINA","curso":"1° 1º"},{"dni":"52103443","nombre":"LOPEZ ESCUDERO, OSCAR ROMAN EMILIANO","curso":"1° 1º"},{"dni":"52685807","nombre":"MAMANI RAMIREZ, JENNIFER MARISOL","curso":"1° 1º"},{"dni":"52937595","nombre":"MARTINEZ, LUANA ÀNGELES","curso":"1° 1º"},{"dni":"52515972","nombre":"MOLINA, AMPARO VICTORIA","curso":"1° 1º"},{"dni":"52520955","nombre":"OCCHIONERO, ARIEL VALENTIN","curso":"1° 1º"},{"dni":"52290937","nombre":"OJEDA JUCHANI, FERNANDO EZEQUIEL","curso":"1° 1º"},{"dni":"52521901","nombre":"ORTEGA SOLIZ, YASMÍN NAILA NATALI","curso":"1° 1º"},{"dni":"51533382","nombre":"PAEZ GOMEZ, LUCIANO LEONEL","curso":"1° 1º"},{"dni":"52685944","nombre":"PEREYRA, LUIS ALEJANDRO","curso":"1° 1º"},{"dni":"53152759","nombre":"POLO AVILA, AILÉN JAZMÍN","curso":"1° 1º"},{"dni":"52685877","nombre":"QUISPE, MATÍAS ALEJANDRO","curso":"1° 1º"},{"dni":"52685652","nombre":"ROMERO RE, ROSARIO LUZ","curso":"1° 1º"},{"dni":"52815338","nombre":"RUIZ LOPEZ, JULIAN MATEO","curso":"1° 1º"},{"dni":"52685740","nombre":"SERRANO AVENDAÑO, BRIAN ROSS","curso":"1° 1º"},{"dni":"52940914","nombre":"TOCONAS RIVAS, JUAN PABLO EDUARDO","curso":"1° 1º"},{"dni":"52521804","nombre":"UVALDO FAJARDO, IAN SAMIR","curso":"1° 1º"},{"dni":"52515498","nombre":"VEDIA ALTAMIRA, MARISOL EUSEBIA","curso":"1° 1º"},{"dni":"51005580","nombre":"YUBEL FERNÁNDEZ, JESUANA MILAGROS","curso":"1° 1º"},{"dni":"51015437","nombre":"YUCRA CHOQUE, OSCAR ARMANDO","curso":"1° 1º"},{"dni":"52685928","nombre":"ZELAYA MENDOZA, THIAGO GAEL","curso":"1° 1º"},{"dni":"53158137","nombre":"ALFARO VALDEZ, IAN THIAGO MANUEL","curso":"1° 2º"},{"dni":"52934631","nombre":"ARANCIBIA MUÑOZ, TATIANA GUADALUPE","curso":"1° 2º"},{"dni":"52936428","nombre":"ARCE, YASMIN VICTORIA","curso":"1° 2º"},{"dni":"52516459","nombre":"AVILA, THIAGO BENJAMIN","curso":"1° 2º"},{"dni":"52685551","nombre":"CALIZAYA, URIEL JONATHAN GASTON","curso":"1° 2º"},{"dni":"50956605","nombre":"CASTRO CORBALAN, LUCIANA MICAELA","curso":"1° 2º"},{"dni":"53153737","nombre":"CIARES, ALAN RICARDO","curso":"1° 2º"},{"dni":"50174294","nombre":"FALCON HIDALGO, SANTIAGO TOMÁS","curso":"1° 2º"},{"dni":"53152927","nombre":"FLORES, IVAN ALEXIS ESTEBAN","curso":"1° 2º"},{"dni":"53159382","nombre":"FLORES CARDOZO, FRANCO DANIEL","curso":"1° 2º"},{"dni":"51475780","nombre":"GARCIA, BRAIAM LEONEL","curso":"1° 2º"},{"dni":"52940750","nombre":"GARCIA CASTRO, SANTINO GABRIEL","curso":"1° 2º"},{"dni":"52937101","nombre":"GONZALEZ, GIOVANNI","curso":"1° 2º"},{"dni":"52520917","nombre":"GUERRERO ALMAZAN, ANALIA YASMIN GIULIANA","curso":"1° 2º"},{"dni":"51412542","nombre":"LOPEZ, AGUSTINA","curso":"1° 2º"},{"dni":"53157089","nombre":"LOPEZ ARANIBAR, MARIANO FACUNDO","curso":"1° 2º"},{"dni":"52521754","nombre":"LOPEZ CACERES, LEYLA FLORENCIA","curso":"1° 2º"},{"dni":"53159421","nombre":"LUCERO, BRUNO","curso":"1° 2º"},{"dni":"52518218","nombre":"MARQUEZ PAEZ, GISELA BELEN","curso":"1° 2º"},{"dni":"52516760","nombre":"MIRANDA, ALEJANDRO TIMOTEO","curso":"1° 2º"},{"dni":"52812352","nombre":"MOYANO MIGLIORE, VALENTINO","curso":"1° 2º"},{"dni":"52288803","nombre":"OVANDO MERMA, LUDMILA MARIA RITA","curso":"1° 2º"},{"dni":"52290430","nombre":"PELETAY MORALES, DYLAN THIAGO","curso":"1° 2º"},{"dni":"52940859","nombre":"PEREZ, JOAQUIN BAUTISTA","curso":"1° 2º"},{"dni":"52937066","nombre":"PIMENTEL, DEBORA VALENTINA","curso":"1° 2º"},{"dni":"51227208","nombre":"PONCE, BRIAN ALEXIS","curso":"1° 2º"},{"dni":"52813175","nombre":"PRINA PASCOLO, FRANCHESCA JULIETA","curso":"1° 2º"},{"dni":"52290848","nombre":"PUMA MORA, FACUNDO JOAQUIN","curso":"1° 2º"},{"dni":"52940992","nombre":"QUIROGA, MARTINA ABIGAIL","curso":"1° 2º"},{"dni":"52685662","nombre":"RIOS, ALEJO MATIAS","curso":"1° 2º"},{"dni":"50812372","nombre":"RODRIGUEZ CORONADO, ERIC YOEL","curso":"1° 2º"},{"dni":"52934452","nombre":"ROSALES, VICTORIA PATRICIA","curso":"1° 2º"},{"dni":"52515658","nombre":"TABOADA MENDOZA, MELANY BELEN","curso":"1° 2º"},{"dni":"52103798","nombre":"TOLABA  MERMA, MARISOL","curso":"1° 2º"},{"dni":"54176520","nombre":"TOLEDO, MILAGROS NICOL","curso":"1° 2º"},{"dni":"52813174","nombre":"UGARTE, THIAGO LEONEL OMAR","curso":"1° 2º"},{"dni":"52103309","nombre":"VARGAS, GONZALO TOMAS","curso":"1° 2º"},{"dni":"50955652","nombre":"VERA MARTINEZ, BELINDA LUZ NEYEN","curso":"1° 2º"},{"dni":"52685937","nombre":"VILLAFAÑE JEREZ, KEILA ZIOMARA","curso":"1° 2º"},{"dni":"52936910","nombre":"YALUSQUI, NICOLE YASMIN","curso":"1° 2º"},{"dni":"52296686","nombre":"ZENTENO NOE, VALENTINA TATIANA","curso":"1° 2º"},{"dni":"52941712","nombre":"BORGES, ALAN GABRIEL","curso":"1° 3º"},{"dni":"51228049","nombre":"BORGES, ALEJO URIEL","curso":"1° 3º"},{"dni":"51296713","nombre":"CACERES, FLORENCIA ROMINA","curso":"1° 3º"},{"dni":"53152806","nombre":"CANARIO VALE, NAHIR VIVIAN","curso":"1° 3º"},{"dni":"53152630","nombre":"COLLAZO ZOLOHAGA, MELINA VICTORIA","curso":"1° 3º"},{"dni":"51295296","nombre":"CONTRERAS BAZAES, THIAGO AARON SEBASTIAN","curso":"1° 3º"},{"dni":"51469628","nombre":"ESPINOSA CAÑA, CRISTIAN JOEL","curso":"1° 3º"},{"dni":"52521093","nombre":"FERNANDEZ, THIAGO IGNACIO VALENTINO","curso":"1° 3º"},{"dni":"52938787","nombre":"FERNANDEZ NIEVAS, CAMILA FRANCHESCA","curso":"1° 3º"},{"dni":"52940824","nombre":"FERREIRA CHAMORRO, MARTÍN","curso":"1° 3º"},{"dni":"52680172","nombre":"FLORES LAMAS, SOL LUDMILA","curso":"1° 3º"},{"dni":"52815327","nombre":"FRANCO LOPEZ, JEREMIAS EZEQUIEL","curso":"1° 3º"},{"dni":"52936433","nombre":"GIL MERCADO, IGNACIO BENJAMÍN","curso":"1° 3º"},{"dni":"50810332","nombre":"GOMEZ ESPEJO, FRANCO DAVID","curso":"1° 3º"},{"dni":"52936949","nombre":"IBARRA CORIA, CLARIBEL EVELYN","curso":"1° 3º"},{"dni":"52941918","nombre":"LA MANTIA, GIULIANA NEREA","curso":"1° 3º"},{"dni":"52937006","nombre":"LÓPEZ, ABIGAIL","curso":"1° 3º"},{"dni":"52289693","nombre":"LUNA, BENJAMÍN RODRIGO","curso":"1° 3º"},{"dni":"53152945","nombre":"LUNA QUIROGA, ZOE NADIRA","curso":"1° 3º"},{"dni":"52296743","nombre":"MAMANI ALBORNOZ, MAURICIO ISMAEL","curso":"1° 3º"},{"dni":"52680073","nombre":"MAMANI MENDOZA, JOHN JASON","curso":"1° 3º"},{"dni":"52284710","nombre":"MARISCAL FLORES, THIAGO GABRIEL","curso":"1° 3º"},{"dni":"52520971","nombre":"MEDINA, JOAQUIN GABRIEL","curso":"1° 3º"},{"dni":"51531852","nombre":"MENESES, LARISSA JOSELIN","curso":"1° 3º"},{"dni":"53153968","nombre":"MILANO NUÑEZ, MILAGROS VALENTINA","curso":"1° 3º"},{"dni":"50478893","nombre":"MOLINA VIDELA, CANDELA ABIGAIL","curso":"1° 3º"},{"dni":"52685818","nombre":"MOLINA VIDELA, IGNACIO ARIEL","curso":"1° 3º"},{"dni":"52521483","nombre":"MOYANO PALLARES, AXEL EMANUEL","curso":"1° 3º"},{"dni":"52521484","nombre":"MOYANO PALLARES, LORENZO RUBéN","curso":"1° 3º"},{"dni":"52813188","nombre":"PACHECO CORNEJO, THOMAS BENJAMIN ALEJANDRO","curso":"1° 3º"},{"dni":"52814622","nombre":"PALLARES, EVAN LAUTARO","curso":"1° 3º"},{"dni":"52683494","nombre":"PAREDES ANDRADA, EMELIE ANTONELLA","curso":"1° 3º"},{"dni":"52290912","nombre":"PASTEN DOMÍNGUEZ, VALENTIN URIEL","curso":"1° 3º"},{"dni":"50953011","nombre":"PINILLA , AISHA AILEN","curso":"1° 3º"},{"dni":"50809863","nombre":"PRIMERO, ARIADNA BELÉN","curso":"1° 3º"},{"dni":"53152697","nombre":"QUIROGA CAYO, MAURICIO MIGUEL","curso":"1° 3º"},{"dni":"52941959","nombre":"RAMOS TARIFA, SANTINO MICHAEL","curso":"1° 3º"},{"dni":"53152988","nombre":"RODRIGUEZ, HELEN MAILIN","curso":"1° 3º"},{"dni":"51533442","nombre":"VASQUEZ TOLABA, DAVID ANGEL","curso":"1° 3º"},{"dni":"52515534","nombre":"VILAJA CASTRO, GUSTAVO ANDRÉ","curso":"1° 3º"},{"dni":"52938982","nombre":"ZABALA GUTIERREZ, BENICIO JUAN","curso":"1° 3º"},{"dni":"51475737","nombre":"ALCAINO PEDERNERA, SANTINO YOEL","curso":"1° 4º"},{"dni":"51529370","nombre":"ALVAREZ MARTINEZ, CELESTE ELVIRA","curso":"1° 4º"},{"dni":"52284551","nombre":"ARAGON FONSECA, FELIPE","curso":"1° 4º"},{"dni":"52939201","nombre":"ARIAS DAVILA, ALAN TIZIANO","curso":"1° 4º"},{"dni":"52293842","nombre":"AUCACHI, ELÍAS EDUARDO JUSTINO","curso":"1° 4º"},{"dni":"52685908","nombre":"CANTO, NAOMI MICAELA","curso":"1° 4º"},{"dni":"52812578","nombre":"CASTAN, LAUTARO ALEJO","curso":"1° 4º"},{"dni":"52680265","nombre":"CRESPO SUBELZA, SILVINA SHEILA","curso":"1° 4º"},{"dni":"52953714","nombre":"DELGADO PEREZ, JOEL DYLAN","curso":"1° 4º"},{"dni":"52940907","nombre":"DIAZ ACHU, YOSELIN ABIGAIL","curso":"1° 4º"},{"dni":"51469849","nombre":"FERRERO, MILAGROS MAGALI","curso":"1° 4º"},{"dni":"52936118","nombre":"FIOCCHETTI MORAN, SANTINO ISMAEL","curso":"1° 4º"},{"dni":"52516522","nombre":"GOMEZ CORTEZ, ALEGRA MORENA","curso":"1° 4º"},{"dni":"52937683","nombre":"GONZALEZ, FRANCISCO DANIEL","curso":"1° 4º"},{"dni":"52298782","nombre":"GUTIERREZ, MÁXIMO FRANCHESCO","curso":"1° 4º"},{"dni":"52940038","nombre":"IBARRA, Jeremías Exequiel","curso":"1° 4º"},{"dni":"53154941","nombre":"JIMENEZ HERRERA, BENJAMÌN","curso":"1° 4º"},{"dni":"52284517","nombre":"LAIME, LUCIANA JULIETA","curso":"1° 4º"},{"dni":"52813247","nombre":"LOPEZ RODRIGUEZ, FLOR AILÉN","curso":"1° 4º"},{"dni":"52297844","nombre":"LUNA, FELIPE LUIS","curso":"1° 4º"},{"dni":"52515537","nombre":"LUNA, MILENA ABIGAIL","curso":"1° 4º"},{"dni":"52521037","nombre":"MALLON TORREZ, LAUTARO WALTER","curso":"1° 4º"},{"dni":"53152799","nombre":"mamani, alvaro valentìn","curso":"1° 4º"},{"dni":"52941469","nombre":"MONTENEGRO ESTRELLA, MÁXIMO BRANDON LUIS","curso":"1° 4º"},{"dni":"52937727","nombre":"NIETO CORREA, THIAGO IAN","curso":"1° 4º"},{"dni":"52680009","nombre":"ORTUSTE RENGEL, ULISES SEBASTIAN","curso":"1° 4º"},{"dni":"52284754","nombre":"QUIROGA BERTUGGIA, ALEXIS EZEQUIEL","curso":"1° 4º"},{"dni":"51187190","nombre":"REINOSO, LARA CELENE","curso":"1° 4º"},{"dni":"52521003","nombre":"SALDAÑA FLORES, BRISA MILAGROS","curso":"1° 4º"},{"dni":"50448874","nombre":"SANCHEZ, JOAQUIN ALEJANDRO","curso":"1° 4º"},{"dni":"52935534","nombre":"SANTOS CABELLO, ROSARIO MARINA ISABEL","curso":"1° 4º"},{"dni":"52685524","nombre":"SEÑA LIZARRAGA, JULIETA JAZMIN","curso":"1° 4º"},{"dni":"52934455","nombre":"SOSA VILLEGAS, MAXIMILIANO CHRISTOPHER","curso":"1° 4º"},{"dni":"52103085","nombre":"VENEGAS, LEONEL GASPAR","curso":"1° 4º"},{"dni":"52815237","nombre":"VILURON, GEREMIAS","curso":"1° 4º"},{"dni":"52937750","nombre":"VIÑOLO, FLORENCIA ABIGAIL","curso":"1° 4º"},{"dni":"52298733","nombre":"ZABALA, ANGELES VALENTINA","curso":"1° 4º"},{"dni":"52685584","nombre":"ZURITA  RIVERO, LAUTARO JOAQUIN","curso":"1° 4º"},{"dni":"51529469","nombre":"ACEVEDO, JAZMÍN MACARENA","curso":"1° 5º"},{"dni":"52936911","nombre":"ACEVEDO, LUIS NICOLAS","curso":"1° 5º"},{"dni":"52684386","nombre":"ALBELO CABEDA, ANGELES MICAELA","curso":"1° 5º"},{"dni":"52933524","nombre":"ALGAÑARAZ, DENIS LUNA","curso":"1° 5º"},{"dni":"52815517","nombre":"APAZA AUCACHI, MILAGROS VALQUIRIA","curso":"1° 5º"},{"dni":"52940937","nombre":"BARROSO DOMINGUEZ, PRISCILA YASMIN","curso":"1° 5º"},{"dni":"52291095","nombre":"CABANA, EZEQUIEL SAMUEL","curso":"1° 5º"},{"dni":"52290851","nombre":"CANDELA FERREYRA, SANTINO BAUTISTA","curso":"1° 5º"},{"dni":"50666320","nombre":"CARVACHO, JAZMÍN AYLÉN","curso":"1° 5º"},{"dni":"53154802","nombre":"CASTILLO, ALAN LIONEL","curso":"1° 5º"},{"dni":"52940264","nombre":"CASTRO CORBALAN, LAUTARO EZEQUIEL","curso":"1° 5º"},{"dni":"52290990","nombre":"DIAZ, TATIANA MALENA","curso":"1° 5º"},{"dni":"52685829","nombre":"FAJARDO, ANTONELLA CLARIBEL","curso":"1° 5º"},{"dni":"51295259","nombre":"FLORES CAYO, LENA ANYELINA","curso":"1° 5º"},{"dni":"52984603","nombre":"GARCILAZO, SHIRLEY LUCY","curso":"1° 5º"},{"dni":"52515539","nombre":"GONZALEZ, FACUNDO","curso":"1° 5º"},{"dni":"52518356","nombre":"GUERRA, SANTINO NICOLAS","curso":"1° 5º"},{"dni":"52685780","nombre":"GUTIERREZ TUCO, JENNIFER LUISANA","curso":"1° 5º"},{"dni":"52518867","nombre":"Limon Chavez, Jonathan Emanuel","curso":"1° 5º"},{"dni":"52680192","nombre":"LOPEZ CONDORI, LEONELA HANNA","curso":"1° 5º"},{"dni":"52813008","nombre":"MAMANI BARRERA, LISBET ALEJANDRA","curso":"1° 5º"},{"dni":"52514514","nombre":"MAMANI VARGAS, JUAN PABLO","curso":"1° 5º"},{"dni":"52298998","nombre":"MEDINA BALVERDE, NELSON NAHUEL","curso":"1° 5º"},{"dni":"52516635","nombre":"MENCHACA MICO, DULCE ABRIL","curso":"1° 5º"},{"dni":"52940989","nombre":"MENDEZ CRUZ, ZAIRA LUCIA","curso":"1° 5º"},{"dni":"52934794","nombre":"ORQUERA BARROSO, BENJAMIN JONATHAN","curso":"1° 5º"},{"dni":"52290858","nombre":"PEREYRA, CRISTIAN LEONEL","curso":"1° 5º"},{"dni":"52685638","nombre":"PEREZ MARTINEZ, TAIS UMA NICOL","curso":"1° 5º"},{"dni":"52685744","nombre":"POBLETE FLORES, MARCOS RODRIGO","curso":"1° 5º"},{"dni":"52680109","nombre":"QUINTEROS GOMEZ, DANIELA VALENTINA","curso":"1° 5º"},{"dni":"52815987","nombre":"QUIROGA, MICHELLE BRISA","curso":"1° 5º"},{"dni":"52516539","nombre":"RODRIGUEZ SUBIA, IGNACIO FREDDY","curso":"1° 5º"},{"dni":"52680289","nombre":"ROJAS RODRIGUEZ, LUCIANO JOAQUÌN","curso":"1° 5º"},{"dni":"52684405","nombre":"ROMERO VARGAS, GASTÓN ALEXIS","curso":"1° 5º"},{"dni":"51090231","nombre":"SOSA VILLEGAS, BRENDA ANAHI","curso":"1° 5º"},{"dni":"52521063","nombre":"SULLCA VILAJA, CAMILA JENNY","curso":"1° 5º"},{"dni":"52542618","nombre":"TORREZ CABANA, Carlos Jonas","curso":"1° 5º"},{"dni":"51227220","nombre":"TORREZ ROLLANO, YASMÍN","curso":"1° 5º"},{"dni":"51469663","nombre":"UGARTE ZENTENO, BENJAMIN ALEXANDER","curso":"1° 5º"},{"dni":"52680033","nombre":"VERA MORALES, DAMIÁN JAVIER ALEJANDRO","curso":"1° 5º"},{"dni":"52104261","nombre":"ZABALA GUTIERREZ, BRUNO YAHIR","curso":"1° 5º"},{"dni":"52284519","nombre":"APAZA CARDOZO, BENJAMIN JOSUE","curso":"2° 1º"},{"dni":"51612751","nombre":"ARISPE MORALES, MANUEL BRUNO ROMAN","curso":"2° 1º"},{"dni":"51318865","nombre":"BALDIVIEZO, DAIANA MILAGROS","curso":"2° 1º"},{"dni":"52103312","nombre":"CAÑA VAQUER, KIARA SOFÍA","curso":"2° 1º"},{"dni":"52295540","nombre":"CARRAL, BENJAMIN MAXIMILIANO","curso":"2° 1º"},{"dni":"52284695","nombre":"CAYO CALIZAYA, SAMARA CAROLYN PIA","curso":"2° 1º"},{"dni":"52285011","nombre":"CHOQUE, JULIO CESAR","curso":"2° 1º"},{"dni":"52289460","nombre":"CHUQUILLAMPA ENRIQUEZ, GIANCARLOS JOSUÉ","curso":"2° 1º"},{"dni":"51318425","nombre":"CORONEL, SANTINO NICOLÁS MANUEL","curso":"2° 1º"},{"dni":"51529459","nombre":"CORREA AMADOR, EMANUEL LUCIANO","curso":"2° 1º"},{"dni":"52290869","nombre":"DELGADO ACHU, GABRIEL ABRAHAM","curso":"2° 1º"},{"dni":"51227176","nombre":"DURAN VILAJA, ABRIL SAMIRA","curso":"2° 1º"},{"dni":"51412393","nombre":"FERNANDEZ AGÜERO, MILAGROS ANTONELLA","curso":"2° 1º"},{"dni":"52061621","nombre":"GONZALEZ MOLINA, VANESA BELÉN","curso":"2° 1º"},{"dni":"52293467","nombre":"MOYANO LUFFI, Candela Nahir","curso":"2° 1º"},{"dni":"51320671","nombre":"MUÑOZ CHAMA, LUCCA NABIL ANDRÉS","curso":"2° 1º"},{"dni":"51013684","nombre":"ORTUSTE, ZOÉ GIANNINA","curso":"2° 1º"},{"dni":"49787294","nombre":"OVANDO MERMA, LAUTARO SANTIAGO","curso":"2° 1º"},{"dni":"52103881","nombre":"PASTEN ZENTENO, ELIAN JOEL","curso":"2° 1º"},{"dni":"51529347","nombre":"PONCE, SOFÍA SOLANGE","curso":"2° 1º"},{"dni":"52295971","nombre":"QUILLAY PACCI, PRISCILA AILIN","curso":"2° 1º"},{"dni":"51227228","nombre":"REYES, MIA AGUSTINA","curso":"2° 1º"},{"dni":"50514686","nombre":"SURUGUAY QUEVEDO, NAHUEL","curso":"2° 1º"},{"dni":"52104150","nombre":"TROGU GASPARI, GUADALUPE LUCIANA","curso":"2° 1º"},{"dni":"52061674","nombre":"VARELA GUTIERREZ, RAMIRO OMAR","curso":"2° 1º"},{"dni":"51227688","nombre":"VELA ALEJANDRO, SHAIEL YULIANA","curso":"2° 1º"},{"dni":"51530972","nombre":"AGUILERA, ZAHIRA LUNA","curso":"2° 2º"},{"dni":"51531301","nombre":"ALMEIDA GONZALEZ, DYLAN MAXIMILIANO","curso":"2° 2º"},{"dni":"52104042","nombre":"ALTURRIA, LAUTARO JEREMÍAS","curso":"2° 2º"},{"dni":"51469157","nombre":"ANTEQUERA, AGUSTINA MICAELA","curso":"2° 2º"},{"dni":"49821996","nombre":"BRIZUELA MARCHISIO, GIULIANA CATALINA","curso":"2° 2º"},{"dni":"51239320","nombre":"BUSTAMANTE MENDEZ, LUCILA SOLANGE","curso":"2° 2º"},{"dni":"51469168","nombre":"CARMONA GUTIERREZ, Milagros Yanet","curso":"2° 2º"},{"dni":"51107124","nombre":"CHOQUE, TIAGO MAXIMILIANO","curso":"2° 2º"},{"dni":"52297081","nombre":"DIAZ, MÁXIMO AGUSTÍN","curso":"2° 2º"},{"dni":"51015369","nombre":"DIAZ ACHU, CAMILA ABRIL","curso":"2° 2º"},{"dni":"50667207","nombre":"FUNES, FERNANDO FABIAN","curso":"2° 2º"},{"dni":"51412597","nombre":"GONZALEZ, EZEQUIEL LIONEL","curso":"2° 2º"},{"dni":"50955124","nombre":"GUERRERO MARTINEZ, AXEL JONATHAN","curso":"2° 2º"},{"dni":"51227198","nombre":"HIDALGO BUSTAMANTE, VICTORIA MURIEL","curso":"2° 2º"},{"dni":"52295532","nombre":"HUANACO PEREZ, DIANA BELÉN","curso":"2° 2º"},{"dni":"51533828","nombre":"LIMACHI ZARATE, ZAIRA ANYELINA","curso":"2° 2º"},{"dni":"51475743","nombre":"LLANTO VENTURA, JOEL YAIR","curso":"2° 2º"},{"dni":"52289612","nombre":"NIETO CORREA, GIANELA NAHIARA PILAR","curso":"2° 2º"},{"dni":"51187989","nombre":"OJEDA JUCHANI, MILAGROS ANABEL","curso":"2° 2º"},{"dni":"51510002","nombre":"PEREZ, ALEX JONATHAN","curso":"2° 2º"},{"dni":"50711763","nombre":"PEREZ, SAMIR IVÁN","curso":"2° 2º"},{"dni":"50711817","nombre":"POLO, JUAN EZEQUIEL","curso":"2° 2º"},{"dni":"51294376","nombre":"QUIROGA, Gisel Gabriela","curso":"2° 2º"},{"dni":"52104065","nombre":"SANCHEZ DALLOSTA, LIONEL BENJAMÍN","curso":"2° 2º"},{"dni":"51530723","nombre":"SILVA, ENRIQUE AGUSTÍN","curso":"2° 2º"},{"dni":"50956276","nombre":"VAQUER, VALENTIN","curso":"2° 2º"},{"dni":"51227177","nombre":"ACHU CABRERA, RUTH ANAHÍ","curso":"2° 3º"},{"dni":"52292086","nombre":"ACHÚ NINANCURO, FRANCO LEONEL","curso":"2° 3º"},{"dni":"52061667","nombre":"AGUERO, AMIEL BENJAMÍN","curso":"2° 3º"},{"dni":"50517460","nombre":"ANDACABA SALDAÑA, AGUSTINA JULIETA","curso":"2° 3º"},{"dni":"52290852","nombre":"APAZA MAMANI, LUDMILA NATALI","curso":"2° 3º"},{"dni":"52151929","nombre":"AZAGUATE FERNANDEZ, ANGELA MAILÉN","curso":"2° 3º"},{"dni":"51296727","nombre":"BRAGAGNOLO GOMEZ, ALDANA VALENTINA","curso":"2° 3º"},{"dni":"51296901","nombre":"CAÑA SARMIENTO, THIAGO AGUSTIN","curso":"2° 3º"},{"dni":"51475626","nombre":"CASTRO MARTINEZ, FLORENCIA BIANCA","curso":"2° 3º"},{"dni":"PA 5714657","nombre":"CHAVEZ QUINO, NINFA AMPARO","curso":"2° 3º"},{"dni":"52103463","nombre":"DOMINGUEZ HIGUERAS, SEBASTIAN JESUS LUCAS","curso":"2° 3º"},{"dni":"52290876","nombre":"FLORES MARTINEZ, NATANAEL ESTEBAN","curso":"2° 3º"},{"dni":"51612678","nombre":"FREDEZ GEREMIA, LAUTARO ROBERTO","curso":"2° 3º"},{"dni":"52291279","nombre":"GIMENEZ VIVARES, LEIDI LEYLA NATASHA","curso":"2° 3º"},{"dni":"52292529","nombre":"MARCHISIO, BIANCA ISABELLA","curso":"2° 3º"},{"dni":"51412375","nombre":"MONTERO DOMINGUEZ, VALENTINA JAZMÍN","curso":"2° 3º"},{"dni":"52291274","nombre":"OCAÑES FIGUEROA, THIAGO PABLO GASTÒN","curso":"2° 3º"},{"dni":"50035302","nombre":"PUEBLA AVILA, ZAHIRA MICAELA","curso":"2° 3º"},{"dni":"95179991","nombre":"RIVERA QUETEGUARI, NOEMI DINELSA","curso":"2° 3º"},{"dni":"51296974","nombre":"RIVERA ROMERO, MIGUEL ALEJANDRO","curso":"2° 3º"},{"dni":"52062050","nombre":"RODRIGUEZ, MAYARI GUILLERMINA","curso":"2° 3º"},{"dni":"51475643","nombre":"TEJERINA FERNANDEZ, YÁN ORLANDO","curso":"2° 3º"},{"dni":"51475751","nombre":"VALE, MARÍA INÉS","curso":"2° 3º"},{"dni":"95440007","nombre":"ZUÑIGA PACO, LIZBETH","curso":"2° 3º"},{"dni":"51228164","nombre":"ACHU, MARÍA ELENA","curso":"2° 4º"},{"dni":"51016012","nombre":"AGUERO, CRISTIAN NAHUEL","curso":"2° 4º"},{"dni":"52290961","nombre":"ALARCON ZARATE, ANTONELA MILAGROS","curso":"2° 4º"},{"dni":"52290815","nombre":"APAZA ALA, ANA LUCIA","curso":"2° 4º"},{"dni":"50809765","nombre":"BUSTOS NIEVAS, GIULIANA ANTONELLA","curso":"2° 4º"},{"dni":"52151969","nombre":"CABANA SEÑA, ORNELLA MAGALI","curso":"2° 4º"},{"dni":"52286544","nombre":"CARAVAJAL ARCE, DANIELA JAZMÍN","curso":"2° 4º"},{"dni":"51189018","nombre":"CAYO , JOSE ALFREDO","curso":"2° 4º"},{"dni":"51318706","nombre":"ESTRADA MARTINEZ, FRANKLIN","curso":"2° 4º"},{"dni":"51016835","nombre":"FRANCO, VALENTINO URIEL","curso":"2° 4º"},{"dni":"51412068","nombre":"GALDEANO JURADO, JESÚS ALEXANDER","curso":"2° 4º"},{"dni":"52284599","nombre":"GARAY MURUA, ESTEBAN JORDAN","curso":"2° 4º"},{"dni":"51475702","nombre":"GODOY, LUCIANA CANDELA","curso":"2° 4º"},{"dni":"51475665","nombre":"LAIME, MÁXIMO IAN","curso":"2° 4º"},{"dni":"52289439","nombre":"MAMANI, ALEXIS","curso":"2° 4º"},{"dni":"52291049","nombre":"MEDINA PEÑA, FRANCISCO MANUEL","curso":"2° 4º"},{"dni":"51227154","nombre":"NARVAEZ, ZAIDA MICAELA","curso":"2° 4º"},{"dni":"51016692","nombre":"PEREZ ARAGON, LAUTARO ALEJO","curso":"2° 4º"},{"dni":"52094051","nombre":"PEREZ NINA, DARA DIANA JACQUELINE","curso":"2° 4º"},{"dni":"51412503","nombre":"PUMA, LUCAS AGUSTÍN","curso":"2° 4º"},{"dni":"51470174","nombre":"RAMOS SOTO, LEILA JAZMIN","curso":"2° 4º"},{"dni":"50378375","nombre":"ROMERO GALVAN, CONSTANZA MURIEL","curso":"2° 4º"},{"dni":"51468892","nombre":"SANCHEZ BOCCHINI, DANTE FRANCESCO","curso":"2° 4º"},{"dni":"52287964","nombre":"TAPIA, AGOSTINA ABIGAIL","curso":"2° 4º"},{"dni":"CE 13740200","nombre":"ZEGARRA FERRUFINO, KAREN JHAZMIN","curso":"2° 4º"},{"dni":"95209539","nombre":"ALEJO FLORES, BRAYAN YHOVANY","curso":"2° 5°"},{"dni":"50711889","nombre":"APACANI, EZEQUIEL BENJAMÍN","curso":"2° 5°"},{"dni":"52061179","nombre":"AVENDAÑO ARGUELLO, NAIARA LUCIA","curso":"2° 5°"},{"dni":"52284521","nombre":"CACERES MAMANI, LUDMILA ALEJANDRA","curso":"2° 5°"},{"dni":"52061198","nombre":"CERON ROCA, DYLAN MISAEL","curso":"2° 5°"},{"dni":"51533225","nombre":"CHAVEZ LOPEZ, AXEL JONATHAN","curso":"2° 5°"},{"dni":"52061675","nombre":"CISNEROS QUIROGA, MATEO VALENTINO","curso":"2° 5°"},{"dni":"52103315","nombre":"COLLAO GARECA, SOFIA CANDELA","curso":"2° 5°"},{"dni":"52289409","nombre":"FALFAN, MARTIN GONZALO RAMON","curso":"2° 5°"},{"dni":"51533226","nombre":"GALDEANO, ALMA YOSELIN","curso":"2° 5°"},{"dni":"51412594","nombre":"GIMENEZ, ALEJANDRO BENJAMIN","curso":"2° 5°"},{"dni":"50515268","nombre":"MALLON , LUDMILA ANAHI","curso":"2° 5°"},{"dni":"52292146","nombre":"MAMANI ASTROÑA, MICAELA YASMÍN","curso":"2° 5°"},{"dni":"52292287","nombre":"MAMANI MARIANO, LUCIANO AGUSTIN","curso":"2° 5°"},{"dni":"51469805","nombre":"MARTINEZ TELERA, IAN THIAGO","curso":"2° 5°"},{"dni":"52148945","nombre":"MIRANDA, MARTIN IVAN","curso":"2° 5°"},{"dni":"51318746","nombre":"MORA ACEVEDO, LUCIANO AGUSTÍN","curso":"2° 5°"},{"dni":"52289675","nombre":"MORALES, DARIO JESUS","curso":"2° 5°"},{"dni":"51320861","nombre":"PAEZ, BRAIAN JOSUE","curso":"2° 5°"},{"dni":"52292689","nombre":"REGULES CARRANZA, SANTINO MATEO","curso":"2° 5°"},{"dni":"52148664","nombre":"ROJAS BARRERA, CELINA JAZMÍN","curso":"2° 5°"},{"dni":"52284533","nombre":"SANTOS, VALENTIN","curso":"2° 5°"},{"dni":"51227242","nombre":"SANTOS CABELLO, ROMINA JAZMÍN","curso":"2° 5°"},{"dni":"51529412","nombre":"SOLIZ SUBIA, BELINDA NAIR","curso":"2° 5°"},{"dni":"52291079","nombre":"SUBIA ORTEGA, OSMAR DENIS","curso":"2° 5°"},{"dni":"50664256","nombre":"ANDRADA MIRANDA,  ARIADNA NICOL","curso":"3° 1º"},{"dni":"50930595","nombre":"APABLAZA AMAYA, ARIANA GUADALUPE","curso":"3° 1º"},{"dni":"51227093","nombre":"ARCE, LOLA AMANDA","curso":"3° 1º"},{"dni":"50955101","nombre":"ARGÜELLO CANTO, LUCIANO DAVID","curso":"3° 1º"},{"dni":"49023815","nombre":"ARIAS CHOQUE, Ingrid Gadalupe","curso":"3° 1º"},{"dni":"51227169","nombre":"CABAÑEZ, ALMA MIA","curso":"3° 1º"},{"dni":"50515257","nombre":"CHACON , ORNELLA GUADALUPE","curso":"3° 1º"},{"dni":"49633426","nombre":"DELGADO, MELISA AGUSTINA","curso":"3° 1º"},{"dni":"50109016","nombre":"ESCUDERO, CIELO GERALDINE","curso":"3° 1º"},{"dni":"51090187","nombre":"ESCUDERO, DANIA GUADALUPE","curso":"3° 1º"},{"dni":"49820516","nombre":"GILI, SOLANGE AILÉN","curso":"3° 1º"},{"dni":"50515267","nombre":"GIMENEZ, BRISA ANA LUZ","curso":"3° 1º"},{"dni":"50712334","nombre":"GONGORA ARTEAGA, ENZO AGUSTÍN","curso":"3° 1º"},{"dni":"50812907","nombre":"JURADO, JUAN PABLO","curso":"3° 1º"},{"dni":"50956253","nombre":"MAMANI RAMIREZ, VANESA MIRIAN","curso":"3° 1º"},{"dni":"50515274","nombre":"MASO, LEONEL CRISTIAN","curso":"3° 1º"},{"dni":"50666230","nombre":"MIGLIORI QUINTERO, ALISA BELÉN","curso":"3° 1º"},{"dni":"50515262","nombre":"MONTAÑA, ROMINA ALEJANDRA","curso":"3° 1º"},{"dni":"94777489","nombre":"MONTERO, ANA ISABEL","curso":"3° 1º"},{"dni":"50374726","nombre":"NARVAEZ, VALENTINA NATALI","curso":"3° 1º"},{"dni":"96316450","nombre":"PEREZ ESPINOZA, , DANIEL HERLAN","curso":"3° 1º"},{"dni":"50515289","nombre":"PODER, ANGELINA RITA","curso":"3° 1º"},{"dni":"49911525","nombre":"QUIROGA, ALEXIS BENJAMIN ALEXANDER","curso":"3° 1º"},{"dni":"50712383","nombre":"REYNOSO PONCE, JUAN BAUTISTA","curso":"3° 1º"},{"dni":"50375943","nombre":"SANCHEZ LLANOS, ALEXANDER SANTINO","curso":"3° 1º"},{"dni":"49949845","nombre":"VARAS VILLARPANDO, MILENA NICOL","curso":"3° 1º"},{"dni":"50448195","nombre":"VARGAS, GUADALUPE LOURDES","curso":"3° 1º"},{"dni":"50666085","nombre":"VENTURA TORREZ, JULIA ORIANA","curso":"3° 1º"},{"dni":"52278931","nombre":"ACUÑA, ARIEL FERNANDO","curso":"3° 2º"},{"dni":"49486604","nombre":"AGUILERA, THIAGO JOAN","curso":"3° 2º"},{"dni":"50516254","nombre":"ALTAMIRANO CORONEL, LARA ANGELA","curso":"3° 2º"},{"dni":"50516257","nombre":"APAZA RIVERA, JOAQUIN ISMAEL","curso":"3° 2º"},{"dni":"49633483","nombre":"ARAOZ, LUIS AGUSTÍN","curso":"3° 2º"},{"dni":"50711858","nombre":"ARGÜELLO, IVÁN AGUSTÍN","curso":"3° 2º"},{"dni":"49083392","nombre":"BRAVO GOMEZ, OCTAVIO CALEB","curso":"3° 2º"},{"dni":"50448748","nombre":"CHOQUE IBARRA, FLORENCIA JAZMIN","curso":"3° 2º"},{"dni":"50711812","nombre":"CONTRERAS CORIA, SOFIA MILAGROS","curso":"3° 2º"},{"dni":"50664028","nombre":"FERNANDEZ, JULIETA LUCIANA","curso":"3° 2º"},{"dni":"51091130","nombre":"FUENTES, RENZO ANDRÉS","curso":"3° 2º"},{"dni":"50374813","nombre":"GUIÑAZÙ CORROZA, JUANA VALENTINA","curso":"3° 2º"},{"dni":"50514102","nombre":"HUANCA, MARIANELA LARA","curso":"3° 2º"},{"dni":"50812729","nombre":"LA MANTIA, THIAGO EMANUEL","curso":"3° 2º"},{"dni":"50515294","nombre":"LAMANTIA, SANTINO LEONEL DE JESUS","curso":"3° 2º"},{"dni":"50711879","nombre":"MEDINA BUSTAMANTE, DYLAN ADRIAN","curso":"3° 2º"},{"dni":"50956230","nombre":"NICASIO, EITAN JOAQUÍN MAURO","curso":"3° 2º"},{"dni":"50711708","nombre":"ORTUSTE RENGEL, CLAUDIO BENJAMÍN","curso":"3° 2º"},{"dni":"50711762","nombre":"PEREZ, SANTIAGO NAIR","curso":"3° 2º"},{"dni":"50514124","nombre":"PONCE SALINAS, MORENA AGOSTINA","curso":"3° 2º"},{"dni":"50515244","nombre":"ROJAS, MAYRA VALENTINA","curso":"3° 2º"},{"dni":"50294764","nombre":"SAFFIE DOMINGUEZ, LUCAS ARIEL","curso":"3° 2º"},{"dni":"51189770","nombre":"SUAREZ, MIA YULIANA","curso":"3° 2º"},{"dni":"50666126","nombre":"SUYO MARTINEZ, BELEN MAGALÍ","curso":"3° 2º"},{"dni":"50173717","nombre":"VAQUER, BRUNO LAUTARO","curso":"3° 2º"},{"dni":"50711814","nombre":"VEDIA, GUSTAVO LIONEL","curso":"3° 2º"},{"dni":"51187388","nombre":"ZARATIEGUI SOLER, UMA DENIS","curso":"3° 2º"},{"dni":"50514365","nombre":"AGUILERA ARANCIBIA, ISABELLA MARTINA","curso":"3° 3º"},{"dni":"51016606","nombre":"BENGOLEA MORENO, RUTH MIA JAEL","curso":"3° 3º"},{"dni":"51189465","nombre":"CANAZA WOCANA, ADALIS NANCY","curso":"3° 3º"},{"dni":"50173358","nombre":"CARABAJAL POLO, LUCILA ABRIL","curso":"3° 3º"},{"dni":"50174256","nombre":"CHAPARRO, ALEX BRIAN","curso":"3° 3º"},{"dni":"50515298","nombre":"CHIRINO CABRERA, JULIETA AILÉN","curso":"3° 3º"},{"dni":"50515297","nombre":"CHIRINO CABRERA, ROCIO MICAELA","curso":"3° 3º"},{"dni":"50906748","nombre":"DELGADO PEREZ, YAMILA JAZMIN","curso":"3° 3º"},{"dni":"50666050","nombre":"ESCUDERO, María Cielo Yasmín","curso":"3° 3º"},{"dni":"51228090","nombre":"FERNANDEZ, RAMIRO IVÁN","curso":"3° 3º"},{"dni":"51090191","nombre":"FLORES, MARTINA YOSELIN","curso":"3° 3º"},{"dni":"50663974","nombre":"LOPEZ ESCUDERO, THIAGO LAUTARO","curso":"3° 3º"},{"dni":"50378439","nombre":"LOPEZ RODRIGUEZ, Yamil Gabriel","curso":"3° 3º"},{"dni":"51014093","nombre":"LUCERO, ÁLVARO JOAQUÍN","curso":"3° 3º"},{"dni":"50711717","nombre":"MALLON, JOSÉ FACUNDO","curso":"3° 3º"},{"dni":"50664758","nombre":"MALLON CHAMBI, DYLAN GABRIEL","curso":"3° 3º"},{"dni":"51015491","nombre":"MARTINEZ, ISAIAS YAMIL","curso":"3° 3º"},{"dni":"50515265","nombre":"MARTINEZ, JAQUELINA MARCELA","curso":"3° 3º"},{"dni":"50955159","nombre":"MELCHIORI ARICOMA, EMILY ESTEFANIA","curso":"3° 3º"},{"dni":"50809959","nombre":"MENDOZA RAMOS, KAYLA GABRIELA","curso":"3° 3º"},{"dni":"50666060","nombre":"MONTENEGRO CHACÓN, VANINA PRISCILA","curso":"3° 3º"},{"dni":"49633410","nombre":"MORA ACEVEDO, JOSUA FABIAN","curso":"3° 3º"},{"dni":"51188616","nombre":"NOVI BUSTOS, PAMELA IVON","curso":"3° 3º"},{"dni":"51089203","nombre":"OLMOS DOMINGUEZ, Matias Uriel","curso":"3° 3º"},{"dni":"49633214","nombre":"PUMA MORA, GONZALO DAMIAN","curso":"3° 3º"},{"dni":"51189719","nombre":"RIVEROS TRIGO, AGOSTINA NAOMI","curso":"3° 3º"},{"dni":"50664128","nombre":"SALDAÑA MARTINEZ, BRIAN LEONEL","curso":"3° 3º"},{"dni":"50448173","nombre":"SORIA LOPEZ, MELINA ABIGAIL","curso":"3° 3º"},{"dni":"49912363","nombre":"TRIGO GONZALEZ, WILLIAM DAVID","curso":"3° 3º"},{"dni":"51016328","nombre":"UÑO HINOJOSA, MAIRA AILÉN","curso":"3° 3º"},{"dni":"50036480","nombre":"VARGAS, ZAIRA LISA","curso":"3° 3º"},{"dni":"50953986","nombre":"AGUIRRE GONZALEZ, ERIC LIONEL","curso":"3° 4º"},{"dni":"50174297","nombre":"ALMA, JOAQUIN MAXIMILIANO","curso":"3° 4º"},{"dni":"50517436","nombre":"ANDRADA, LOURDES GABRIELA","curso":"3° 4º"},{"dni":"50218762","nombre":"ARAMAYO, DIEGO ARMANDO","curso":"3° 4º"},{"dni":"49922429","nombre":"ARANCIBIA, JULISSA ABIGAIL","curso":"3° 4º"},{"dni":"CE 2376417","nombre":"AYLLON RIOS, CINTHIA ANILED","curso":"3° 4º"},{"dni":"51015151","nombre":"BARROZO, BENJAMIN EMANUEL","curso":"3° 4º"},{"dni":"51295645","nombre":"BRAVO, BRUNO AGUSTÍN","curso":"3° 4º"},{"dni":"50516767","nombre":"CARRIZO, BENICIO ARIEL","curso":"3° 4º"},{"dni":"50448858","nombre":"CASTILLO, JUAN IGNACIO","curso":"3° 4º"},{"dni":"51187354","nombre":"CEPEDA GARCIA, GUADALUPE AILIN","curso":"3° 4º"},{"dni":"50955072","nombre":"CHULVE, AGUSTIN DAVID","curso":"3° 4º"},{"dni":"50514418","nombre":"CORTEZ UCCIARDELLO, BRISA MEI","curso":"3° 4º"},{"dni":"49912406","nombre":"DOMINGUEZ, LUIS LAUTARO","curso":"3° 4º"},{"dni":"49923297","nombre":"FARFAN, BARBARA ITATÍ","curso":"3° 4º"},{"dni":"51015448","nombre":"MANZO AVILA, NARELLA GUADALUPE","curso":"3° 4º"},{"dni":"50036076","nombre":"MARTINEZ, AILÉN DAIANA","curso":"3° 4º"},{"dni":"50954869","nombre":"NAVARRO GARECA, AINARA MAILÉN","curso":"3° 4º"},{"dni":"51015149","nombre":"PAEZ, VICTORIA VALENTINA","curso":"3° 4º"},{"dni":"50294871","nombre":"RAMOS TARIFA, EVELYN NICOL","curso":"3° 4º"},{"dni":"50376601","nombre":"RUARTES, SOFÍA ALEJANDRA","curso":"3° 4º"},{"dni":"50969152","nombre":"SILVEIRA-FLORES, RAFAEL ESTANISLAO","curso":"3° 4º"},{"dni":"50448742","nombre":"TOLEDANO, ROSA GUADALUPE MAGALÍ","curso":"3° 4º"},{"dni":"50515281","nombre":"VACA NAVARRO, LOURDES AILEN","curso":"3° 4º"},{"dni":"50955153","nombre":"VAZQUEZ, NAOMI ZOE","curso":"3° 4º"},{"dni":"49132665","nombre":"VEDIA, JONATHAN MAXIMILIANO","curso":"3° 4º"},{"dni":"49821970","nombre":"VILLANUEVA, CAMILA CELESTE","curso":"3° 4º"},{"dni":"48870516","nombre":"ACOSTA, María José","curso":"3° 5"},{"dni":"50036075","nombre":"ARMENTA CARDOZO, CRISTIAN YOEL","curso":"3° 5"},{"dni":"49991276","nombre":"BAUTISTA ALEGRE, CINTIA CELESTE","curso":"3° 5"},{"dni":"49820528","nombre":"CANTO, MELODY JAZMIN","curso":"3° 5"},{"dni":"95581050","nombre":"Condori Almazan, Ana Maribel","curso":"3° 5"},{"dni":"51016389","nombre":"CORDOVA, DANIEL JAVIER","curso":"3° 5"},{"dni":"50711738","nombre":"CORVALAN, VALENTIN JOSE","curso":"3° 5"},{"dni":"50813421","nombre":"FAJARDO, MAILÉN CELESTE","curso":"3° 5"},{"dni":"51089673","nombre":"FLORES AIROLDI, LAUTARO NAHUEL","curso":"3° 5"},{"dni":"49991433","nombre":"FREDEZ GEREMIA, THIAGO NICOLAS","curso":"3° 5"},{"dni":"50666088","nombre":"GUTIERREZ LUNA, TIZIANO SEBASTIAN","curso":"3° 5"},{"dni":"50378432","nombre":"LOPEZ, GISEL MACARENA","curso":"3° 5"},{"dni":"50515301","nombre":"LUJAN, CECILIA NORALI","curso":"3° 5"},{"dni":"48724293","nombre":"MAMANÍ, CHIARA AVRIL","curso":"3° 5"},{"dni":"50813313","nombre":"MAMANI BARRERA, AYRTON EXEQUIEL","curso":"3° 5"},{"dni":"51296977","nombre":"MARTINEZ IBAÑEZ, MARIA CANDELA DE LOS ÁNGELES","curso":"3° 5"},{"dni":"50293275","nombre":"MIRANDA, JESUS ROMAN","curso":"3° 5"},{"dni":"50175201","nombre":"MORA COLQUE, BENJAMÍN TIZIANO","curso":"3° 5"},{"dni":"50374787","nombre":"OJEDA, JOAQUIN CARLOS","curso":"3° 5"},{"dni":"50515231","nombre":"PAREJAS, LUCIANO EMMANUEL","curso":"3° 5"},{"dni":"50378402","nombre":"PORCO, NAIR JOEL","curso":"3° 5"},{"dni":"50956218","nombre":"QUIPILDOR MAMANI, JEREMIAS EZEQUIEL","curso":"3° 5"},{"dni":"50956051","nombre":"QUIROGA LUNA, LAUTARO GABRIEL BENJA","curso":"3° 5"},{"dni":"50517433","nombre":"QUISPE, AGUSTIN FABIAN","curso":"3° 5"},{"dni":"50516215","nombre":"RIVERA ORTEGA, ZOÉ JAZMÍN","curso":"3° 5"},{"dni":"50666007","nombre":"ROCABADO MONTOYA, CELINA NOEMÍ","curso":"3° 5"},{"dni":"49487221","nombre":"SAUSA MAMANI, Ariel Gustavo","curso":"3° 5"},{"dni":"51189447","nombre":"SAUSA MAMANI, DAVID LUIS","curso":"3° 5"},{"dni":"51016672","nombre":"TORREZ DIAZ, SANTIAGO MATEO","curso":"3° 5"},{"dni":"51228015","nombre":"VILCA IBARRA, LUISANA JAZMIN","curso":"3° 5"},{"dni":"50378009","nombre":"ZALAZAR, DAIANA EMILCE","curso":"3° 5"},{"dni":"50174157","nombre":"CABANA SOTO, AGUSTINA NOELIA","curso":"4° 1º"},{"dni":"50282037","nombre":"CARRAL, THIAGO SEBASTIAN EMMANUEL","curso":"4° 1º"},{"dni":"49787620","nombre":"CHAVEZ LOPEZ, GRISELDA","curso":"4° 1º"},{"dni":"49991296","nombre":"CONDE CALIZAYA, SOFIA","curso":"4° 1º"},{"dni":"49488550","nombre":"CRUZ BURGOS, BRISA CANDELA","curso":"4° 1º"},{"dni":"49911507","nombre":"CRUZ DIAZ, TRINIDAD MALENA","curso":"4° 1º"},{"dni":"49633245","nombre":"ESTRADA MARTINEZ, AXEL","curso":"4° 1º"},{"dni":"49633208","nombre":"FRANCO LOPEZ, VICTOR YOEL","curso":"4° 1º"},{"dni":"50449904","nombre":"GALEAN GONZALES, GALE JONATAN","curso":"4° 1º"},{"dni":"50374763","nombre":"GIMENEZ, GABRIELA ANTONELA","curso":"4° 1º"},{"dni":"49923228","nombre":"GUZMAN, Luana Daiana","curso":"4° 1º"},{"dni":"49923286","nombre":"MAMANI, MATIAS BENJAMIN","curso":"4° 1º"},{"dni":"50448689","nombre":"MAMANI MENDOZA, RUBÉN DYLAN","curso":"4° 1º"},{"dni":"49949221","nombre":"PEDERNERA, YAGO BAUTISTA","curso":"4° 1º"},{"dni":"49855472","nombre":"PEDRAZA, JOSÍAS DANIEL","curso":"4° 1º"},{"dni":"49820520","nombre":"PEREYRA, BENJAMÍN ALEXIS","curso":"4° 1º"},{"dni":"49633218","nombre":"PORCO MAMANI, NOELIA NÉLIDA","curso":"4° 1º"},{"dni":"49583739","nombre":"ROMERO GALVAN, AGOSTINA MICAELA","curso":"4° 1º"},{"dni":"49335960","nombre":"SILVA, MARLENE PRISCILA","curso":"4° 1º"},{"dni":"48395498","nombre":"SORIA LÓPEZ, MELANIE MAGDALENA","curso":"4° 1º"},{"dni":"48810057","nombre":"SUAREZ, LUZ ZAHIRA ABIGAIL","curso":"4° 1º"},{"dni":"50217884","nombre":"VENEGAS CORAITE, NAHIR ZAHIRA","curso":"4° 1º"},{"dni":"49821960","nombre":"ZAPATA, PRISCILA SELENE","curso":"4° 1º"},{"dni":"49991310","nombre":"ZARATE, LEONEL BENJAMÍN EMILIANO","curso":"4° 1º"},{"dni":"48473033","nombre":"ZARATE VARAS, LUCÍA ANABEL","curso":"4° 1º"},{"dni":"49402958","nombre":"ZURITA RIVERO, AGUSTINA ANTONELA","curso":"4° 1º"},{"dni":"50375302","nombre":"ADARO COSTA, ANA CANDELA","curso":"4° 2º"},{"dni":"50052239","nombre":"APAZA ALA, DAVID MARTÍN","curso":"4° 2º"},{"dni":"50218585","nombre":"BARCONTE, ESTEBAN REY","curso":"4° 2º"},{"dni":"50376622","nombre":"BIANCHINI, ALEJANDRA NOEMÍ","curso":"4° 2º"},{"dni":"50174258","nombre":"CALIZAYA VARGAS, GUADALUPE ANTONELLA","curso":"4° 2º"},{"dni":"50174277","nombre":"CANAZA MAMANI, LUZ MACARENA GUADALUPE","curso":"4° 2º"},{"dni":"50294712","nombre":"CARMONA PORTAL, LEONIDES SEBASTIAN","curso":"4° 2º"},{"dni":"50173393","nombre":"CARVACHO FERREYRA, MATÍAS GABRIEL","curso":"4° 2º"},{"dni":"50173617","nombre":"CASTRO, ALDANA VALENTINA","curso":"4° 2º"},{"dni":"49632826","nombre":"CORDOBA MORENO, DÉBORA JIMENA","curso":"4° 2º"},{"dni":"50174283","nombre":"LATARA ANTEQUERA, CANDELA LUZ","curso":"4° 2º"},{"dni":"49991274","nombre":"LÓPEZ ALFARO, LORENZO NICOLÁS","curso":"4° 2º"},{"dni":"49631299","nombre":"LUNA, LOURDES CANDELA","curso":"4° 2º"},{"dni":"50036527","nombre":"MAMANI VARGAS, JULIETA MAIRA","curso":"4° 2º"},{"dni":"50173756","nombre":"MARISCAL FLORES, YOSELIE AYLÉN","curso":"4° 2º"},{"dni":"50036999","nombre":"MONTAÑO BENEGA, MELINA JUDITH","curso":"4° 2º"},{"dni":"49082287","nombre":"OLMOS DOMINGUEZ, Nicolás  Gabriel","curso":"4° 2º"},{"dni":"49633236","nombre":"ORTIZ, AGUSTÍN GONZALO","curso":"4° 2º"},{"dni":"50035288","nombre":"PONCE CORONADO, ANDREA SALOME","curso":"4° 2º"},{"dni":"49633212","nombre":"RODRIGUEZ, LUCA","curso":"4° 2º"},{"dni":"50036653","nombre":"SOLIS, BENJAMIN NAHUEL","curso":"4° 2º"},{"dni":"50174275","nombre":"SOSA, NICOLÁS HUMBERTO","curso":"4° 2º"},{"dni":"50376748","nombre":"STAGNOLI, AMBAR CAMILA","curso":"4° 2º"},{"dni":"49633247","nombre":"TOLABA CONDORI, ANALIA CLARISA","curso":"4° 2º"},{"dni":"49820540","nombre":"VALE, BRIAN EZEQUIEL HAMIL","curso":"4° 2º"},{"dni":"49633425","nombre":"VALE, MANUEL PEDRO","curso":"4° 2º"},{"dni":"50294737","nombre":"VERA CAVIERES, BRENDA NICOL","curso":"4° 2º"},{"dni":"49265000","nombre":"VERA MARTINEZ, MATÍAS ARIEL","curso":"4° 2º"},{"dni":"49855494","nombre":"ZOLOHAGA, BRISA ANTONELLA","curso":"4° 2º"},{"dni":"49991316","nombre":"ALARCON ZARATE, CANDELA JULIETA","curso":"4° 3º"},{"dni":"49991290","nombre":"BORDON VARGAS, DELFINA MIA","curso":"4° 3º"},{"dni":"50217866","nombre":"CAMARGO, DOMINIC GABRIEL","curso":"4° 3º"},{"dni":"50174175","nombre":"CHOQUE MAMANI, LAUTARO EZEQUIEL","curso":"4° 3º"},{"dni":"50110005","nombre":"COLQUE LOPEZ, LUCAS MAURICIO","curso":"4° 3º"},{"dni":"49335580","nombre":"CUENCA  MATIAS,  BRIAN ARIEL","curso":"4° 3º"},{"dni":"49821961","nombre":"DELGADO ACHU, JULIANA PAULA","curso":"4° 3º"},{"dni":"50174173","nombre":"ESPEJO, MURIEL LUISANA","curso":"4° 3º"},{"dni":"50036583","nombre":"GIANONI PRINA, ALEJO VALENTINO","curso":"4° 3º"},{"dni":"50217797","nombre":"GOMEZ, SANTINO NAHUEL","curso":"4° 3º"},{"dni":"49130611","nombre":"GOMEZ QUISPE, JOSÈ LUIS","curso":"4° 3º"},{"dni":"49821954","nombre":"OSORIO , MALENA FLORENCIA","curso":"4° 3º"},{"dni":"49820543","nombre":"PEREZ, MARCOS JOEL","curso":"4° 3º"},{"dni":"50173708","nombre":"POLVERINI , Luz Tania","curso":"4° 3º"},{"dni":"49821983","nombre":"QUISPE JULIAN, MIA CELESTE","curso":"4° 3º"},{"dni":"49855348","nombre":"RAMOS SOTO, PRISCILA ELIN","curso":"4° 3º"},{"dni":"49633224","nombre":"RIVERO CRUZ, GERALDINE TAMARA MILAGROS","curso":"4° 3º"},{"dni":"50036659","nombre":"ROBLES CASTILLO, LAUTARO EXEQUIEL","curso":"4° 3º"},{"dni":"49821000","nombre":"RODRIGUEZ SANDRI, JULIETA NERINA","curso":"4° 3º"},{"dni":"49633405","nombre":"RUIZ DIAZ, SOLEDAD TATIANA","curso":"4° 3º"},{"dni":"49787700","nombre":"SALDAÑA FLORES, ANGELES ESMERALDA","curso":"4° 3º"},{"dni":"50174199","nombre":"TORRES, KIARA PILAR","curso":"4° 3º"},{"dni":"49023839","nombre":"TORRES CAZON, AXEL LEONEL","curso":"4° 3º"},{"dni":"50374795","nombre":"TORRES CAZÓN, GISEL MILAGROS","curso":"4° 3º"},{"dni":"49953006","nombre":"VASQUEZ CARRIZO, ALVIS ADIEL","curso":"4° 3º"},{"dni":"49991320","nombre":"VERA, LUANA CAMILA","curso":"4° 3º"},{"dni":"50175039","nombre":"YUCRA CAISENA, CARLOS DANIEL","curso":"4° 3º"},{"dni":"49855495","nombre":"ZOLOHAGA, CANDELA BELEN","curso":"4° 3º"},{"dni":"48813939","nombre":"AGUIRRE LLANOS, NICOLE ABIGAIL","curso":"4° 4°"},{"dni":"49787266","nombre":"ANDACABA SALDAÑA, ANTONELA ABIGAIL","curso":"4° 4°"},{"dni":"50515226","nombre":"BERGAS FERNANDEZ, EMILIANO MARTÍN","curso":"4° 4°"},{"dni":"50217765","nombre":"BERRIOS, LUCIANO GABRIEL","curso":"4° 4°"},{"dni":"49912038","nombre":"BOLIVA, JORDAN WALTER NAHIR","curso":"4° 4°"},{"dni":"49069812","nombre":"CORDOBA BAEZ, MORENA JAZMIN","curso":"4° 4°"},{"dni":"49787270","nombre":"CORDOBA TIRADO, ALEXIS JOEL","curso":"4° 4°"},{"dni":"49132693","nombre":"DONOSO OZÁN, ANGELINA ARIADNA","curso":"4° 4°"},{"dni":"50294886","nombre":"FERNANDEZ, CRISTIAN RONALDO","curso":"4° 4°"},{"dni":"49583400","nombre":"GRIMALDES ZOLA, ALEX ISMAEL","curso":"4° 4°"},{"dni":"50173681","nombre":"HUANACO PEREZ, THIAGO LUIS","curso":"4° 4°"},{"dni":"49787985","nombre":"JOFRE, CANDELA AGUSTINA","curso":"4° 4°"},{"dni":"49401145","nombre":"MALLON CHAMBI, LUCÌA VANESA","curso":"4° 4°"},{"dni":"49488830","nombre":"MAMANI , JAZMÍN NOEMÍ","curso":"4° 4°"},{"dni":"49487350","nombre":"MAMANI BARRERA, DIEGO ARMANDO","curso":"4° 4°"},{"dni":"49583595","nombre":"MESEGUER, LUIS IGNACIO","curso":"4° 4°"},{"dni":"49821992","nombre":"MIGLIORI ROSALES, LUCAS TEODORO","curso":"4° 4°"},{"dni":"96322014","nombre":"NINA BARRERA, AIME ALENIR","curso":"4° 4°"},{"dni":"50035343","nombre":"ONTIVEROS BRAVO, JONATHAN JOEL","curso":"4° 4°"},{"dni":"50175733","nombre":"RODRIGUEZ LÁZARO, LUCIANA","curso":"4° 4°"},{"dni":"49820509","nombre":"SERRANO AVENDAÑO, JACQUELINE TATIANA","curso":"4° 4°"},{"dni":"49132688","nombre":"VARGAS, AGUSTIN EMILIANO","curso":"4° 4°"},{"dni":"49346140","nombre":"ZELAYA MENDOZA, MARCEL ANTONIO","curso":"4° 4°"},{"dni":"48967728","nombre":"ACUÑA , ALEXANDER ALDO","curso":"5° 1º"},{"dni":"49130141","nombre":"APAZA CARDOZO, DANIEL ISAAC","curso":"5° 1º"},{"dni":"49335966","nombre":"APAZA RIVERA, SOFÍA ESTER","curso":"5° 1º"},{"dni":"49083628","nombre":"ARMENTA CARDOZO, MICHELLE ALEJANDRA","curso":"5° 1º"},{"dni":"49581159","nombre":"CABANA SEÑA, ERIC GABRIEL","curso":"5° 1º"},{"dni":"48895850","nombre":"CASTILLO GARAY, CANDELARIA GUILLERMINA","curso":"5° 1º"},{"dni":"49335538","nombre":"CASTRO MARTINEZ , BRENDA ARIADNA","curso":"5° 1º"},{"dni":"49335506","nombre":"CHOQUE, BELINDA GUADALUPE","curso":"5° 1º"},{"dni":"49489244","nombre":"CHOQUELLAMPA SEÑA, TOMÁS URIEL","curso":"5° 1º"},{"dni":"49130782","nombre":"CHUNGARA IBAJA, MARÍA ANTONELA","curso":"5° 1º"},{"dni":"49402497","nombre":"CORZO, EUNICE MELINA","curso":"5° 1º"},{"dni":"48395569","nombre":"CRUZ AUCACHI, CELESTE AGUSTINA","curso":"5° 1º"},{"dni":"49081028","nombre":"FARFÁN CARABAJAL, LUZ ANAHÍ","curso":"5° 1º"},{"dni":"48967913","nombre":"FERNANDEZ GUTIERREZ, CELESTE VANESA","curso":"5° 1º"},{"dni":"48967725","nombre":"FLORES, MATIAS JOEL","curso":"5° 1º"},{"dni":"49335567","nombre":"GUERRERO MARTINEZ, MICAELA YASMIN","curso":"5° 1º"},{"dni":"49488719","nombre":"IBARRA CORIA, FERNANDO KEVIN","curso":"5° 1º"},{"dni":"CE 95322968","nombre":"LATORRE LATORRE, LISETTE SOLANGE","curso":"5° 1º"},{"dni":"47723834","nombre":"LIZARDO, MILAGROS NAHIR JAZMÍN","curso":"5° 1º"},{"dni":"47876389","nombre":"MENACHO BALLESTEROS, LEONEL FABRICIO","curso":"5° 1º"},{"dni":"95772558","nombre":"MENDEZ, YENIFER DAYANA","curso":"5° 1º"},{"dni":"49488579","nombre":"NICASIO, SEBASTIÁN LAUTARO","curso":"5° 1º"},{"dni":"48725787","nombre":"PAEZ OLGUIN, SANTIAGO GONZALO","curso":"5° 1º"},{"dni":"47724978","nombre":"PAEZ OLGUIN, VALENTINA ESTEFANÍA","curso":"5° 1º"},{"dni":"49486801","nombre":"PALAVECINO, SEBASTIÁN","curso":"5° 1º"},{"dni":"49132998","nombre":"PEREZ PAREDES, ALEXANDER GABRIEL","curso":"5° 1º"},{"dni":"48331875","nombre":"PIZZOLATTO, MARILYN ABIGAIL","curso":"5° 1º"},{"dni":"49131298","nombre":"PRIMERO, JENNIFER ALDANA","curso":"5° 1º"},{"dni":"49631248","nombre":"ROMERO DAVILA, EMILCE TATIANA","curso":"5° 1º"},{"dni":"49402414","nombre":"SALDAÑA MARTINEZ, LIZ EVELYN","curso":"5° 1º"},{"dni":"49488536","nombre":"SALVADORE LUNA , MILAGROS TATIANA","curso":"5° 1º"},{"dni":"48608651","nombre":"SANTILLAN CARVACHO, SHEILA NICOLE","curso":"5° 1º"},{"dni":"49335959","nombre":"SILVA, MAIRA ARIADNA","curso":"5° 1º"},{"dni":"49583354","nombre":"SUVIA CORDOVA, ROMINA MILAGROS","curso":"5° 1º"},{"dni":"49023984","nombre":"TITO MAMANI, CRISTIAN LUIS FRANCISCO","curso":"5° 1º"},{"dni":"49023902","nombre":"TOLEDO, BRISA ORIANA","curso":"5° 1º"},{"dni":"48725713","nombre":"VELIZ, VALENTINA BEATRIZ","curso":"5° 1º"},{"dni":"47876765","nombre":"VIDELA PALACIO, TATIANA PRISCILA","curso":"5° 1º"},{"dni":"48968884","nombre":"YEBARA CABALLERO, GISELA DAIANA","curso":"5° 1º"},{"dni":"95447455","nombre":"ZUÑIGA PACO, EDGAR","curso":"5° 1º"},{"dni":"48752358","nombre":"ALBORNOZ CORONEL, ARACELI MICHELLE","curso":"5° 2º"},{"dni":"49335534","nombre":"ARAGON FONSECA, NAZARENO","curso":"5° 2º"},{"dni":"95041819","nombre":"ARCE GUZMAN, MARCELO","curso":"5° 2º"},{"dni":"48895813","nombre":"ARTAZA NAVARRO, JOAQUÍN GASPAR","curso":"5° 2º"},{"dni":"49335609","nombre":"BASTÍAS, MÍA MARÍA DEL MAR","curso":"5° 2º"},{"dni":"48750538","nombre":"BAUTISTA ALEGRE, ELÍAS EFRAÍN","curso":"5° 2º"},{"dni":"50387856","nombre":"CACCAVO, MIGUEL ALEJANDRO","curso":"5° 2º"},{"dni":"48895830","nombre":"CANAZA MAMANI, MAIRA BELEN BRISA","curso":"5° 2º"},{"dni":"49486848","nombre":"CORCHADO, AYRTON LEONEL","curso":"5° 2º"},{"dni":"48896705","nombre":"DALLOZTA, BRENDA MICAELA","curso":"5° 2º"},{"dni":"50387511","nombre":"JIMENEZ HERRERA, GUILLERMO","curso":"5° 2º"},{"dni":"49402348","nombre":"LIMACHI ZARATE, CELESTE GISEL","curso":"5° 2º"},{"dni":"49023820","nombre":"LOPEZ RODRIGUEZ, Kevin Sofiel","curso":"5° 2º"},{"dni":"49335612","nombre":"LUNA, ORIANA MARLENE","curso":"5° 2º"},{"dni":"48257166","nombre":"MESAS CABEZAS, JONATÁN DAVID","curso":"5° 2º"},{"dni":"49583377","nombre":"NIEVAS, MARINA ALEJANDRA","curso":"5° 2º"},{"dni":"49335636","nombre":"PAEZ, Giuliano Nahuel","curso":"5° 2º"},{"dni":"49581801","nombre":"PALMA, ZAMIRA GIANELLA","curso":"5° 2º"},{"dni":"48895833","nombre":"POLVERINI, LEONELA ESTER","curso":"5° 2º"},{"dni":"49264702","nombre":"PORCO, MICHAEL AGUSTÍN","curso":"5° 2º"},{"dni":"49486842","nombre":"SANCHEZ, MÍA GUADALUPE","curso":"5° 2º"},{"dni":"48967933","nombre":"URBIETA, LUDMILA AYLÉN","curso":"5° 2º"},{"dni":"27093324","nombre":"MONTALDI, PACÍFICO HUMBERTO","curso":"5° 2º"},{"dni":"49265012","nombre":"ANGULO, FERNANDO SAMUEL","curso":"5° 3º"},{"dni":"49130142","nombre":"APAZA CARDOZO, GABRIEL FACUNDO","curso":"5° 3º"},{"dni":"49182915","nombre":"BORGES, LUCIANA ELIZABETH","curso":"5° 3º"},{"dni":"49335554","nombre":"BRIZUELA ROLDAN, VICTORIA AZUCENA","curso":"5° 3º"},{"dni":"48810073","nombre":"BUSTAMANTE, DANA AGUSTINA","curso":"5° 3º"},{"dni":"49081331","nombre":"CARRIZO, GIULIANA FLORENCIA","curso":"5° 3º"},{"dni":"48967535","nombre":"CHOQUE, DAIANA CAMILA","curso":"5° 3º"},{"dni":"49181927","nombre":"DEMIRAS MELLA, GUADALUPE DANIELA","curso":"5° 3º"},{"dni":"49265049","nombre":"ESCOBAR RUBILOTTA, GUADALUPE LUCIANA","curso":"5° 3º"},{"dni":"49131044","nombre":"ESPINOSA CAÑA, ORIANA ELISABETH","curso":"5° 3º"},{"dni":"49263188","nombre":"FIOCCHETTI MORAN, ROSARIO MAITE","curso":"5° 3º"},{"dni":"49024712","nombre":"FONTANA ROLDAN, GIULIANA PAULA","curso":"5° 3º"},{"dni":"49183023","nombre":"GONZALEZ, MARIANELA EUGENIA","curso":"5° 3º"},{"dni":"49402980","nombre":"GUAJARDO MOLINA, JULIETA ALDANA","curso":"5° 3º"},{"dni":"49583380","nombre":"JAIME CAÑA, RODRIGO EMMANUEL","curso":"5° 3º"},{"dni":"49316775","nombre":"LAIME, JAZMIN SHAIRA","curso":"5° 3º"},{"dni":"49081323","nombre":"LENCINA, ANABELA","curso":"5° 3º"},{"dni":"49082266","nombre":"LIZARDO, MORENA LUZ","curso":"5° 3º"},{"dni":"48897097","nombre":"LUCERO ORTUBIA, BRENDA AGUSTINA","curso":"5° 3º"},{"dni":"49132669","nombre":"MAMANI , LUCIANA MILAGROS","curso":"5° 3º"},{"dni":"49184940","nombre":"MAMANI CONDORI, YANEL MICAELA","curso":"5° 3º"},{"dni":"49182984","nombre":"MAMANI SOTO, ERICA ROXANA","curso":"5° 3º"},{"dni":"49081311","nombre":"MARTINEZ IBAÑEZ, GIOVANNI OMAR","curso":"5° 3º"},{"dni":"49584817","nombre":"MIGLIORI QUINTERO, SOFÍA ESTER","curso":"5° 3º"},{"dni":"48812559","nombre":"MIRANDA VARGAS, FERNANDA ABRIL","curso":"5° 3º"},{"dni":"49132695","nombre":"MORON, AGUSTINA EMILIA","curso":"5° 3º"},{"dni":"48395189","nombre":"MOYANO CHAMORRO, CHIARA ABRIL","curso":"5° 3º"},{"dni":"48396403","nombre":"OCHOA, MARÍA DE LOS ANGELES","curso":"5° 3º"},{"dni":"48608739","nombre":"QUIROGA, LUCIANO GABRIEL","curso":"5° 3º"},{"dni":"49583008","nombre":"QUIROGA MUÑOZ, VALENTINA ABIGAIL","curso":"5° 3º"},{"dni":"94684229","nombre":"RAMOS VILLALBA, BRYAN YAMIL","curso":"5° 3º"},{"dni":"49183099","nombre":"RETA, MAITE MARTINA","curso":"5° 3º"},{"dni":"49081309","nombre":"RETA BUSTOS, GUADALUPE AIXA","curso":"5° 3º"},{"dni":"48541991","nombre":"RIVERA SUBIA, ALEXANDER TEOFILO","curso":"5° 3º"},{"dni":"49131242","nombre":"RIVEROS ORTIZ, MELANIE VALENTINA","curso":"5° 3º"},{"dni":"49131063","nombre":"ROSALES MAMANI, CATRIEL URIEL","curso":"5° 3º"},{"dni":"49488573","nombre":"SAFIE, DAMIÁN ALEXANDER","curso":"5° 3º"},{"dni":"94907160","nombre":"VARGAS CONDORI, CLIVER","curso":"5° 3º"},{"dni":"48752328","nombre":"VARGAS ROMERO, MELISA AILÉN","curso":"5° 3º"},{"dni":"49633232","nombre":"VILLARRUBIA, LUCAS LAUTARO","curso":"5° 3º"},{"dni":"49130762","nombre":"YUCRA CHOQUE, ROCIO MABEL","curso":"5° 3º"},{"dni":"49265766","nombre":"ZABALA BARROZO, MAXIMILIANO BRIAN","curso":"5° 3º"},{"dni":"48811927","nombre":"ANGLAT TELLO, FLORENCIA CAMILA","curso":"5° 4°"},{"dni":"49584062","nombre":"AZAGUATE FERNANDEZ, KARIM LIONEL","curso":"5° 4°"},{"dni":"48608671","nombre":"BOLIVA, MÍA ANGELES","curso":"5° 4°"},{"dni":"49335949","nombre":"CHOQUE MAMANI, DAVID NICOLAS","curso":"5° 4°"},{"dni":"48078199","nombre":"CORONEL, GASTÓN ÁNGEL","curso":"5° 4°"},{"dni":"49487487","nombre":"DIAS, THIAGO DANIEL","curso":"5° 4°"},{"dni":"48257841","nombre":"FERNANDEZ-SAYAL, GASTÓN","curso":"5° 4°"},{"dni":"48608621","nombre":"IBARRA ARCE, EMMANUEL SANDRO","curso":"5° 4°"},{"dni":"49335711","nombre":"JAEN PERIZ, SOL ABIGAIL","curso":"5° 4°"},{"dni":"48543291","nombre":"PEREZ PAREDES, SANDRA MORENA","curso":"5° 4°"},{"dni":"49583774","nombre":"RETAMALES SAVOINI, ANTONELLA EVANGELINA","curso":"5° 4°"},{"dni":"48331886","nombre":"RIVERA GALLARDO, BRIAN ALEX","curso":"5° 4°"},{"dni":"49265036","nombre":"RIVERO, TATIANA JAZMÍN","curso":"5° 4°"},{"dni":"49083684","nombre":"ROPERO, VALENTINA AYLÉN","curso":"5° 4°"},{"dni":"48752386","nombre":"SEÑA LIZARRAGA, GONZALO ANDRES","curso":"5° 4°"},{"dni":"49265001","nombre":"SORUCO ARRIOLA, NOELIA BETTIANA","curso":"5° 4°"},{"dni":"49025889","nombre":"SUAREZ CHAUQUE, ÁNGEL ABRAHAM","curso":"5° 4°"},{"dni":"49631245","nombre":"VILLEGAS ACHU, SOFÍA PRISCILA","curso":"5° 4°"}];
+
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+let currentUser = null;
+let sessionTimer = null;
+let tardanzas = [];
+let searchResults = [];
+let modalMode = '';
+
+// ══════════════════════════════
+// CLOCK
+// ══════════════════════════════
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('statDate').textContent = now.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ══════════════════════════════
+// AUTH
+// ══════════════════════════════
+async function login() {
+  const u = document.getElementById('loginUser').value;
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+
+  if (!u) {
+    err.style.display = 'block';
+    err.textContent = 'Seleccioná un usuario.';
+    return;
+  }
+
+  const userData = USERS[u];
+  if (!userData) {
+    err.style.display = 'block';
+    err.textContent = 'Usuario o contraseña incorrectos.';
+    return;
+  }
+
+  const inputHash = await sha256(p);
+  if (inputHash === userData.hash) {
+    currentUser = { key: u, rol: userData.rol, badge: userData.badge };
+    // Intentar cargar tardanzas guardadas (con fallback si localStorage no está disponible)
+    try {
+      const saved = localStorage.getItem('tard_' + todayKey());
+      tardanzas = saved ? JSON.parse(saved) : [];
+    } catch(e) {
+      tardanzas = [];
+    }
+    err.style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('userLabel').textContent = currentUser.rol;
+    updateClock();
+    sheetsYaGuardado = false;
+    renderTardanzas();
+    // Sesión de 2 horas
+    if (sessionTimer) clearTimeout(sessionTimer);
+    sessionTimer = setTimeout(() => {
+      alert('La sesión expiró después de 2 horas. Por favor volvé a iniciar sesión.');
+      logout();
+    }, 2 * 60 * 60 * 1000);
+  } else {
+    err.style.display = 'block';
+    err.textContent = 'Usuario o contraseña incorrectos.';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+}
+
+function logout() {
+  if (sessionTimer) { clearTimeout(sessionTimer); sessionTimer = null; }
+  currentUser = null;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('searchNombre').value = '';
+  document.getElementById('searchDni').value = '';
+  document.getElementById('resultsGrid').innerHTML = '';
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+function todayKey() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+// ══════════════════════════════
+// SORT
+// ══════════════════════════════
+
+
+function normalizar(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+
+function buscar() {
+  const n = normalizar(document.getElementById('searchNombre').value.trim());
+  const d = document.getElementById('searchDni').value.trim();
+  if (!n && !d) { document.getElementById('resultsGrid').innerHTML = ''; return; }
+  
+  let filtered = ALUMNOS.filter(a => {
+    const matchN = n ? normalizar(a.nombre).includes(n) : true;
+    const matchD = d ? a.dni.includes(d) : true;
+    return matchN && matchD;
+  });
+
+  searchResults = filtered.slice(0, 20);
+  
+  renderResults();
+}
+
+function renderResults() {
+  const grid = document.getElementById('resultsGrid');
+  if (!searchResults.length) {
+    grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px">Sin resultados.</div>';
+    return;
+  }
+  
+  const tardDnis = new Set(tardanzas.map(t => t.dni));
+  
+  grid.innerHTML = searchResults.map(a => {
+    const isAdded = tardDnis.has(a.dni);
+    const initials = a.nombre.split(',')[0].trim().slice(0,2).toUpperCase();
+    return `<div class="alumnoCard ${isAdded ? 'added' : ''}" onclick="agregarTardanza('${a.dni}')">
+      <div class="alumnoAvatar">${initials}</div>
+      <div class="alumnoInfo">
+        <div class="nombre">${a.nombre}</div>
+        <div class="meta">${a.curso} · DNI ${a.dni}</div>
+      </div>
+      <div class="cardAction ${isAdded ? 'added' : 'add'}">${isAdded ? '✓' : '+'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════
+// TARDANZAS
+// ══════════════════════════════
+let _pendingDni = null;
+
+function agregarTardanza(dni) {
+  if (tardanzas.find(t => t.dni === dni)) {
+    showToast('Este alumno ya fue registrado');
+    return;
+  }
+  const alumno = ALUMNOS.find(a => a.dni === dni);
+  if (!alumno) return;
+  _pendingDni = dni;
+  document.getElementById('zonaAlumnoLabel').textContent = alumno.nombre;
+  document.getElementById('zonaOtroInput').value = '';
+  document.getElementById('zonaModal').classList.add('open');
+}
+
+function confirmarZona(zona) {
+  document.getElementById('zonaModal').classList.remove('open');
+  if (!_pendingDni) return;
+  const alumno = ALUMNOS.find(a => a.dni === _pendingDni);
+  _pendingDni = null;
+  if (!alumno) return;
+  const now = new Date();
+  tardanzas.push({
+    ...alumno,
+    hora: now.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}),
+    registradoPor: currentUser.rol,
+    fecha: todayKey(),
+    zona: zona || ''
+  });
+  saveTardanzas();
+  renderTardanzas();
+  renderResults();
+  showToast(`✓ ${alumno.nombre.split(',')[0]} agregado`);
+}
+
+function confirmarZonaOtro() {
+  const val = document.getElementById('zonaOtroInput').value.trim();
+  confirmarZona(val || 'Otra');
+}
+
+function quitarTardanza(dni) {
+  tardanzas = tardanzas.filter(t => t.dni !== dni);
+  saveTardanzas();
+  renderTardanzas();
+  renderResults();
+}
+
+function saveTardanzas() {
+  try { localStorage.setItem("tard_" + todayKey(), JSON.stringify(tardanzas)); } catch(e) {}
+  document.getElementById("statTard").textContent = tardanzas.length;
+  document.getElementById("tardCount").textContent = tardanzas.length + " alumno" + (tardanzas.length !== 1 ? "s" : "");
+}
+
+function renderTardanzas() {
+  const list = document.getElementById('tardanzasList');
+  document.getElementById('statTard').textContent = tardanzas.length;
+  document.getElementById('tardCount').textContent = tardanzas.length + ' alumno' + (tardanzas.length !== 1 ? 's' : '');
+  
+  if (!tardanzas.length) {
+    list.innerHTML = `<li style="list-style:none"><div class="emptyState">Aún no se registraron tardanzas.<br>Buscá y seleccioná alumnos para agregarlos.</div></li>`;
+    return;
+  }
+  
+  list.innerHTML = tardanzas.map((t, i) => `
+    <li>
+      <div class="tardNum">${String(i+1).padStart(2,'0')}</div>
+      <div class="tardInfo">
+        <div class="nombre">${t.nombre}</div>
+        <div class="sub">${t.curso} · DNI ${t.dni} · ${t.registradoPor}${t.zona ? ' · 📍 ' + t.zona : ''}</div>
+      </div>
+      <div class="tardTime">${t.hora}</div>
+      <button class="btnRemove" onclick="quitarTardanza('${t.dni}')" title="Quitar">✕</button>
+    </li>
+  `).join('');
+}
+
+function limpiarTardanzas() {
+  if (!tardanzas.length) return;
+  if (confirm('¿Limpiar toda la lista de tardanzas de hoy?')) {
+    tardanzas = [];
+    sheetsYaGuardado = false;
+    saveTardanzas();
+    renderTardanzas();
+    renderResults();
+    showToast('Lista limpiada');
+  }
+}
+
+// ══════════════════════════════
+// MENSAJE
+// ══════════════════════════════
+function generarMensaje() {
+  const fecha = new Date().toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  let msg = `📋 *TARDANZAS - Escuela 4076 Arq. Carlos Thays*\n`;
+  msg += `📅 ${fecha}\n`;
+  msg += `👤 Registrado por: ${currentUser.rol}\n`;
+  msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+  
+  const porCurso = {};
+  tardanzas.forEach(t => {
+    if (!porCurso[t.curso]) porCurso[t.curso] = [];
+    porCurso[t.curso].push(t);
+  });
+  
+  Object.keys(porCurso).sort().forEach(curso => {
+    msg += `\n*${curso}*\n`;
+    porCurso[curso].forEach(t => {
+      msg += `  • ${t.nombre} (DNI: ${t.dni}) — ${t.hora}${t.zona ? ' [' + t.zona + ']' : ''}\n`;
+    });
+  });
+  
+  msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `Total: ${tardanzas.length} alumno${tardanzas.length !== 1 ? 's' : ''} con tardanza`;
+  return msg;
+}
+
+// ══════════════════════════════
+// MODAL & ENVÍO
+// ══════════════════════════════
+function abrirModal(mode) {
+  if (!tardanzas.length) { showToast('No hay tardanzas registradas'); return; }
+  modalMode = mode;
+  const msg = generarMensaje();
+  document.getElementById('modalPreview').textContent = msg;
+  
+  if (mode === 'wa') {
+    document.getElementById('modalTitle').textContent = '📱 Enviar por WhatsApp';
+    document.getElementById('modalDesc').textContent = 'Se abrirá WhatsApp con el mensaje listo. Podés enviarlo al grupo de la escuela.';
+    document.getElementById('modalConfirmBtn').textContent = 'Abrir WhatsApp';
+  } else {
+    document.getElementById('modalTitle').textContent = '📧 Enviar por Email';
+    document.getElementById('modalDesc').textContent = 'Se abrirá tu cliente de email con el asunto y cuerpo del mensaje listo.';
+    document.getElementById('modalConfirmBtn').textContent = 'Abrir Email';
+  }
+  
+  document.getElementById('modal').classList.add('open');
+}
+
+function cerrarModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+async function confirmarEnvio() {
+  const msg = generarMensaje();
+  const fecha = new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', year:'numeric'});
+
+  if (modalMode === 'wa') {
+    const encoded = encodeURIComponent(msg);
+    window.open('https://wa.me/?text=' + encoded, '_blank');
+  } else {
+    const subject = encodeURIComponent(`Tardanzas ${fecha} — Esc. 4076`);
+    const body = encodeURIComponent(msg);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  cerrarModal();
+
+  // Guardado automático — solo una vez por sesión/lista
+  if (!sheetsYaGuardado) {
+    sheetsYaGuardado = true;
+    showToast('Enviando — guardando en Sheets...');
+    await enviarASheets(true);
+  } else {
+    showToast('✓ Ya guardado en Sheets anteriormente');
+  }
+}
+
+// ══════════════════════════════
+// EXPORT CSV
+// ══════════════════════════════
+function exportarCSV() {
+  if (!tardanzas.length) { showToast('No hay tardanzas para exportar'); return; }
+  const fecha = new Date().toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', year:'numeric'});
+  let csv = 'N\u00b0,Apellido y Nombre,DNI,Curso,Hora,Registrado por,Motivo\n';
+  tardanzas.forEach((t, i) => {
+    csv += `${i+1},"${t.nombre}","${t.dni}","${t.curso}","${t.hora}","${t.registradoPor}","${t.zona || ''}"\n`;
+  });
+  
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tardanzas_${fecha.replace(/\//g,'-')}.csv`;
+  a.click();
+  showToast('CSV exportado');
+}
+
+// ══════════════════════════════
+// TOAST
+// ══════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Cerrar modal al hacer click afuera
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) cerrarModal();
+});
+
+// ══════════════════════════════
+// SCANNER QR / BARRAS
+// ══════════════════════════════
+let sheetsYaGuardado = false;
+let scannerStream = null;
+let scannerRunning = false;
+let scannerInterval = null;
+let lastScannedDni = null;
+let scannerFoundAlumno = null;
+let lastScanTime = 0;
+
+function setScannerStatus(msg, tipo) {
+  const el = document.getElementById('scannerStatusMsg');
+  el.textContent = msg;
+  el.className = 'scannerStatus' + (tipo ? ' ' + tipo : '');
+}
+
+async function iniciarScanner() {
+  // Detectar contexto inseguro (file:// o HTTP sin HTTPS)
+  if (location.protocol === 'file:' || (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')) {
+    document.getElementById('cameraWarning').style.display = 'block';
+    setScannerStatus('⛔ La cámara no puede abrirse desde file://. Usá el ingreso manual de DNI abajo.', 'err');
+    return;
+  }
+
+  // Verificar soporte
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setScannerStatus('⚠ Tu navegador no soporta acceso a la cámara. Usá el ingreso manual de DNI.', 'err');
+    return;
+  }
+
+  setScannerStatus('Solicitando acceso a la cámara...', '');
+  document.getElementById('btnStartScan').style.display = 'none';
+
+  try {
+    // Preferir cámara trasera en móviles
+    const constraints = {
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    };
+
+    scannerStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const video = document.getElementById('scannerVideo');
+    video.srcObject = scannerStream;
+    await video.play();
+
+    document.getElementById('scannerViewport').classList.add('active');
+    document.getElementById('scannerIdle').style.display = 'none';
+    document.getElementById('btnStopScan').style.display = 'flex';
+    document.getElementById('scannerStatusBadge').textContent = '● Activa';
+    document.getElementById('scannerStatusBadge').style.color = 'var(--success)';
+    scannerRunning = true;
+
+    setScannerStatus('📷 Enfocá el código de barras o QR del DNI en el recuadro', '');
+
+    // Intentar usar ZXing si está disponible
+    if (window.ZXing) {
+      iniciarZXing(video);
+    } else {
+      // Fallback: intentar cargar ZXing dinámicamente
+      cargarZXingDinamico(video);
+    }
+
+  } catch (err) {
+    document.getElementById('btnStartScan').style.display = 'flex';
+    if (err.name === 'NotAllowedError') {
+      setScannerStatus('⛔ Permiso de cámara denegado. Habilitá el acceso en tu navegador.', 'err');
+    } else if (err.name === 'NotFoundError') {
+      setScannerStatus('⚠ No se encontró cámara en este dispositivo.', 'err');
+    } else {
+      setScannerStatus('⚠ Error al acceder a la cámara: ' + err.message, 'err');
+    }
+  }
+}
+
+function cargarZXingDinamico(video) {
+  // ZXing no cargó desde CDN, usar canvas fallback
+  setScannerStatus('📷 Modo básico activo — ingresá el DNI manualmente si no detecta', 'warn');
+  iniciarCanvasScan(video);
+}
+
+function iniciarZXing(video) {
+  try {
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+    codeReader.decodeFromVideoElement(video, (result, err) => {
+      if (result) procesarCodigoEscaneado(result.getText());
+    });
+    window._zxingReader = codeReader;
+  } catch(e) {
+    iniciarCanvasScan(video);
+  }
+}
+
+async function iniciarCanvasScan(video) {
+  // Canvas-based scan usando BarcodeDetector nativo (Chrome/Android) o fallback
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if ('BarcodeDetector' in window) {
+    // Try with pdf417 first (DNI argentino), fall back to broader set
+    let supportedFormats = ['qr_code', 'pdf417', 'code_128', 'code_39', 'data_matrix'];
+    try {
+      const supported = await BarcodeDetector.getSupportedFormats();
+      supportedFormats = supported.filter(f => ['qr_code','pdf417','code_128','code_39','data_matrix','ean_13'].includes(f));
+    } catch(e) {}
+    const detector = new BarcodeDetector({ formats: supportedFormats });
+
+    setScannerStatus('📷 Detector nativo activo — enfocá el código', '');
+
+    scannerInterval = setInterval(async () => {
+      if (!scannerRunning || video.readyState < 2) return;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      try {
+        const barcodes = await detector.detect(canvas);
+        if (barcodes.length > 0) {
+          procesarCodigoEscaneado(barcodes[0].rawValue);
+        }
+      } catch(e) {}
+    }, 300);
+
+  } else {
+    setScannerStatus('⚠ Tu navegador no soporta detección automática. Usá el ingreso manual de DNI abajo.', 'warn');
+  }
+}
+
+function procesarCodigoEscaneado(raw) {
+  const now = Date.now();
+  if (now - lastScanTime < 2000) return; // anti-spam: 2 segundos entre scans
+  lastScanTime = now;
+
+  // Extraer DNI del código escaneado
+  // DNI argentino PDF417 tiene formato: "00@APELLIDO@NOMBRE@M@DNI@..." 
+  // o puede ser solo el número
+  let dni = extraerDNI(raw);
+
+  if (!dni) {
+    setScannerStatus('⚠ Código leído pero no se reconoció como DNI: ' + raw.slice(0, 30), 'warn');
+    return;
+  }
+
+  if (dni === lastScannedDni) return; // mismo código dos veces seguidas
+  lastScannedDni = dni;
+
+  // Buscar en la lista
+  const alumno = ALUMNOS.find(a => a.dni === dni || a.dni.replace(/\D/g,'') === dni.replace(/\D/g,''));
+
+  if (alumno) {
+    scannerFoundAlumno = alumno;
+    mostrarResultadoScanner(alumno, dni);
+
+    // Auto-agregar si no está ya en la lista
+    if (!tardanzas.find(t => t.dni === alumno.dni)) {
+      agregarDesdeScanner();
+    } else {
+      setScannerStatus('⚠ ' + alumno.nombre.split(',')[0] + ' ya está en la lista de hoy', 'warn');
+    }
+  } else {
+    scannerFoundAlumno = null;
+    ocultarResultadoScanner();
+    setScannerStatus('❌ DNI ' + dni + ' no encontrado en el padrón escolar', 'err');
+  }
+}
+
+function extraerDNI(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+
+  // ── Formato PDF417 DNI argentino ──
+  // Track 1 (separado por @): "00@APELLIDO@NOMBRE@SEXO@DNI@EJEMPLAR@NACIMIENTO@EMISION@..."
+  // Track 2 (separado por @): "APELLIDO@NOMBRE@DNI@SEXO@..."
+  // Algunos lectores emiten los tracks juntos o con variantes
+  if (raw.includes('@')) {
+    const parts = raw.split('@');
+    // Buscar cualquier parte que sea exclusivamente dígitos con longitud de DNI (7-9)
+    for (let i = 0; i < parts.length; i++) {
+      const candidate = parts[i].trim().replace(/\s/g, '');
+      if (/^\d{7,9}$/.test(candidate)) {
+        return candidate;
+      }
+    }
+    // Fallback: buscar entre posiciones 3 y 7 removiendo no-dígitos
+    for (let i = 3; i < Math.min(parts.length, 8); i++) {
+      const candidate = parts[i].replace(/\D/g, '');
+      if (candidate.length >= 7 && candidate.length <= 9) {
+        return candidate;
+      }
+    }
+  }
+
+  // ── Solo dígitos — escáner de pistola o teclado ──
+  const soloDigitos = raw.replace(/\D/g, '');
+  if (soloDigitos.length >= 7 && soloDigitos.length <= 9) {
+    return soloDigitos;
+  }
+
+  // ── QR con texto "DNI: 12345678" o "DNI 12345678" ──
+  const matchDni = raw.match(/DNI[:\s]+(\d{7,9})/i);
+  if (matchDni) return matchDni[1];
+
+  // ── Número embebido de 7-9 dígitos en cadena más larga ──
+  const matchNum = raw.match(/\b(\d{7,9})\b/);
+  if (matchNum) return matchNum[1];
+
+  return null;
+}
+
+function mostrarResultadoScanner(alumno, dni) {
+  document.getElementById('srName').textContent = alumno.nombre;
+  document.getElementById('srMeta').textContent = `${alumno.curso} · DNI ${dni}`;
+  document.getElementById('scanResult').classList.add('show');
+}
+
+function ocultarResultadoScanner() {
+  document.getElementById('scanResult').classList.remove('show');
+  scannerFoundAlumno = null;
+}
+
+function agregarDesdeScanner() {
+  if (!scannerFoundAlumno) return;
+  const dni = scannerFoundAlumno.dni;
+  ocultarResultadoScanner();
+  lastScannedDni = null;
+  agregarTardanza(dni);
+}
+
+function buscarDniManual() {
+  const input = document.getElementById('manualDniInput');
+  const dni = input.value.trim().replace(/\D/g, '');
+  if (!dni) return;
+
+  const alumno = ALUMNOS.find(a => a.dni.replace(/\D/g,'') === dni);
+  if (alumno) {
+    scannerFoundAlumno = alumno;
+    mostrarResultadoScanner(alumno, dni);
+    setScannerStatus('✓ Alumno encontrado', 'ok');
+  } else {
+    ocultarResultadoScanner();
+    setScannerStatus('❌ DNI ' + dni + ' no encontrado en el padrón', 'err');
+  }
+  input.value = '';
+}
+
+document.getElementById('manualDniInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') buscarDniManual();
+});
+
+function detenerScanner() {
+  scannerRunning = false;
+
+  if (scannerInterval) { clearInterval(scannerInterval); scannerInterval = null; }
+  if (window._zxingReader) { try { window._zxingReader.reset(); } catch(e){} window._zxingReader = null; }
+
+  if (scannerStream) {
+    scannerStream.getTracks().forEach(t => t.stop());
+    scannerStream = null;
+  }
+
+  const video = document.getElementById('scannerVideo');
+  video.srcObject = null;
+
+  document.getElementById('scannerViewport').classList.remove('active');
+  document.getElementById('scannerIdle').style.display = 'block';
+  document.getElementById('btnStopScan').style.display = 'none';
+  document.getElementById('btnStartScan').style.display = 'flex';
+  document.getElementById('scannerStatusBadge').textContent = 'Cámara inactiva';
+  document.getElementById('scannerStatusBadge').style.color = 'var(--text3)';
+  ocultarResultadoScanner();
+  setScannerStatus('', '');
+  lastScannedDni = null;
+}
+
+// ══════════════════════════════
+// GOOGLE SHEETS (Apps Script)
+// ══════════════════════════════
+function setSheetsStatus(msg, tipo) {
+  const el = document.getElementById('sheetsStatus');
+  el.textContent = msg;
+  el.className = 'sheetsStatus ' + (tipo || '');
+  el.style.display = msg ? 'inline-block' : 'none';
+}
+
+async function enviarASheets(silencioso = false) {
+  if (!tardanzas.length) { if (!silencioso) showToast('No hay tardanzas para guardar'); return; }
+
+  const url = document.getElementById('gasUrl').value.trim();
+  if (!url) {
+    if (!silencioso) setSheetsStatus('⚠ URL no configurada', 'err');
+    return;
+  }
+
+  setSheetsStatus('Guardando en Sheets...', 'wait');
+
+  const payload = {
+    fecha: todayKey(),
+    registradoPor: currentUser.rol,
+    tardanzas: tardanzas.map(t => ({
+      nombre:       t.nombre,
+      dni:          t.dni,
+      curso:        t.curso,
+      hora:         t.hora,
+      zona:         t.zona || '',
+      registradoPor: t.registradoPor,
+      fecha:        t.fecha
+    }))
+  };
+
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+    const text = await resp.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { data = { status: 'ok' }; }
+
+    if (data.status === 'ok' || data.result === 'success') {
+      setSheetsStatus('✓ ' + tardanzas.length + ' registro' + (tardanzas.length !== 1 ? 's' : '') + ' guardados en Sheets', 'ok');
+      showToast('✓ Datos guardados en Google Sheets');
+    } else {
+      throw new Error(data.message || 'Respuesta inesperada del servidor');
+    }
+  } catch(err) {
+    setSheetsStatus('✕ Error: ' + err.message, 'err');
+    showToast('Error al conectar con Sheets');
+    console.error('Sheets error:', err);
+  } finally {
+    // btn ya no existe en la interfaz, nada que resetear
+  }
+}
+
+// Guardar URL en localStorage para no tener que pegarla cada vez
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzBvZLmv36T84JPNzXQN5rp135GtCvMVW4I2a4wEYn8Q9MNSGtLMMEg9_bnPmwFiEJdMQ/exec';
+    const savedUrl = localStorage.getItem('gas_url') || GAS_URL;
+    document.getElementById('gasUrl').value = savedUrl;
+    document.getElementById('gasUrl').addEventListener('change', function() {
+      try { localStorage.setItem('gas_url', this.value.trim()); } catch(e) {}
+    });
+  } catch(e) {}
+});
+</script>
+</body>
+</html>
