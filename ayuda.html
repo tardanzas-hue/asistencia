@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayuda — Escuela 4076</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0b1a0e;
+    --surface: #112016;
+    --surface2: #172b1c;
+    --border: #1e4028;
+    --accent: #2e8b47;
+    --success: #4ade80;
+    --warn: #f59e0b;
+    --red: #f87171;
+    --text: #ecfdf0;
+    --text2: #86b898;
+    --text3: #4a7a5a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(180deg, #112016 0%, #0f1c12 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .hLeft { display: flex; align-items: center; gap: 14px; }
+
+  .hIcon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .hLeft h1 { font-size: 17px; font-weight: 700; }
+  .hLeft span { font-size: 12px; color: var(--text2); }
+
+  .btnVolver {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+  .btnVolver:hover {
+    border-color: var(--accent);
+    color: var(--success);
+    background: rgba(46,139,71,.1);
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero .badge {
+    display: inline-block;
+    background: rgba(46,139,71,.15);
+    border: 1px solid rgba(46,139,71,.3);
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--success);
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .hero h2 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    color: var(--text2);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+
+  .toc h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 14px;
+  }
+
+  .toc ol {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+
+  .toc li a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color .2s;
+  }
+  .toc li a:hover { color: var(--success); }
+  .toc li a .num {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: rgba(46,139,71,.15);
+    color: var(--success);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 44px;
+    scroll-margin-top: 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2e8b47, #1a6b32);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .section h2 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .section p, .section li {
+    font-size: 14.5px;
+    color: var(--text2);
+    line-height: 1.75;
+  }
+
+  .section p { margin-bottom: 12px; }
+
+  .section ul, .section ol {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 16px;
+  }
+
+  .section ul li, .section ol li {
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 1px solid rgba(30,64,40,.5);
+  }
+
+  .section ul li:last-child, .section ol li:last-child { border-bottom: none; }
+
+  .section ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 6px;
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .section ol { counter-reset: steps; }
+  .section ol li { counter-increment: steps; }
+  .section ol li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: rgba(46,139,71,.2);
+    color: var(--success);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    display: flex; align-items: center; justify-content: center;
+    top: 10px;
+  }
+
+  /* Callouts */
+  .callout {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .callout.info {
+    background: rgba(46,139,71,.1);
+    border: 1px solid rgba(46,139,71,.25);
+    color: var(--text2);
+  }
+
+  .callout.warn {
+    background: rgba(245,158,11,.1);
+    border: 1px solid rgba(245,158,11,.25);
+    color: #d4a017;
+  }
+
+  .callout.tip {
+    background: rgba(96,165,250,.1);
+    border: 1px solid rgba(96,165,250,.25);
+    color: #93c5fd;
+  }
+
+  /* Keyboard keys */
+  kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  /* Step cards */
+  .step-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .step-card .sc-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+  }
+
+  .step-card .sc-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .step-card .sc-desc {
+    font-size: 12.5px;
+    color: var(--text2);
+    line-height: 1.55;
+  }
+
+  /* Users table */
+  .usersTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+  }
+
+  .usersTable th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .usersTable td {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid rgba(30,64,40,.6);
+  }
+
+  .usersTable tr:last-child td { border-bottom: none; }
+  .usersTable .mono { font-family: 'DM Mono', monospace; color: var(--success); }
+
+  /* ── FOOTER ── */
+  .footerHelp {
+    text-align: center;
+    padding: 32px 0 0;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 600px) {
+    .toc ol { grid-template-columns: 1fr; }
+    .step-grid { grid-template-columns: 1fr; }
+    main { padding: 28px 16px 60px; }
+    header { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hLeft">
+    <div class="hIcon">📖</div>
+    <div>
+      <h1>Manual de Uso</h1>
+      <span>Control de Tardanzas — Esc. 4076</span>
+    </div>
+  </div>
+  <a href="index.html" class="btnVolver">← Volver al inicio</a>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="badge">Guía completa</div>
+    <h2>¿Cómo usar el sistema?</h2>
+    <p>Esta guía explica paso a paso cómo registrar tardanzas,<br>enviar el informe y sincronizar con Google Sheets.</p>
+  </div>
+
+  <!-- Índice -->
+  <div class="toc">
+    <h3>Contenido</h3>
+    <ol>
+      <li><a href="#s1"><span class="num">1</span> Iniciar sesión</a></li>
+      <li><a href="#s2"><span class="num">2</span> Registrar una tardanza</a></li>
+      <li><a href="#s3"><span class="num">3</span> Usar el escáner de DNI</a></li>
+      <li><a href="#s4"><span class="num">4</span> Enviar por WhatsApp o Email</a></li>
+      <li><a href="#s5"><span class="num">5</span> Google Sheets automático</a></li>
+      <li><a href="#s6"><span class="num">6</span> Usuarios y contraseñas</a></li>
+      <li><a href="#s7"><span class="num">7</span> Preguntas frecuentes</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. Login -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Iniciar sesión</h2>
+    </div>
+    <p>Al abrir el sistema aparece la pantalla de ingreso. Seguí estos pasos:</p>
+    <ol>
+      <li>Seleccioná tu usuario del menú desplegable (Director o Preceptora 1–11).</li>
+      <li>Escribí tu contraseña en el campo correspondiente.</li>
+      <li>Presioná el botón <strong>Ingresar</strong> o la tecla <kbd>Enter</kbd>.</li>
+    </ol>
+    <div class="callout info">
+      <span class="icon">ℹ️</span>
+      <span>Si el usuario o contraseña no son correctos, aparecerá un mensaje de error en rojo. Verificá que no haya espacios de más al escribir la contraseña.</span>
+    </div>
+    <div class="callout warn">
+      <span class="icon">⚠️</span>
+      <span>No compartas tu contraseña con otras personas. Cada registro queda asociado al usuario que lo cargó.</span>
+    </div>
+  </div>
+
+  <!-- 2. Registrar tardanza -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Registrar una tardanza</h2>
+    </div>
+    <p>Hay dos formas de agregar un alumno a la lista de tardanzas:</p>
+
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="sc-num">Opción A</div>
+        <div class="sc-title">🔍 Buscar por nombre</div>
+        <div class="sc-desc">Escribí el apellido o nombre en el campo de búsqueda. Los resultados aparecen al instante. Hacé clic en la tarjeta del alumno para agregarlo.</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-num">Opción B</div>
+        <div class="sc-title">🔢 Buscar por DNI</div>
+        <div class="sc-desc">Escribí los primeros dígitos del DNI en el campo correspondiente. Útil cuando sabés el número de documento del alumno.</div>
+      </div>
+    </div>
+
+    <p>Tras hacer clic en un alumno, aparece una ventana para seleccionar la <strong>zona de procedencia</strong>. Elegí la zona correspondiente o presioná <em>Omitir zona</em> si no aplica.</p>
+
+    <ul>
+      <li>Las tardanzas registradas aparecen en la lista inferior con número, nombre, curso, DNI y hora exacta.</li>
+      <li>Para quitar un alumno de la lista, presioná el botón <strong>✕</strong> a la derecha de su nombre.</li>
+      <li>Un alumno que ya fue agregado aparece resaltado en verde en los resultados de búsqueda y no puede agregarse dos veces.</li>
+    </ul>
+  </div>
+
+  <!-- 3. Scanner -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Usar el escáner de DNI</h2>
+    </div>
+    <p>El sistema puede leer el código de barras PDF417 del DNI argentino usando la cámara del dispositivo.</p>
+    <ol>
+      <li>Presioná <strong>▶ Activar cámara</strong>. El navegador pedirá permiso para acceder a la cámara — aceptá.</li>
+      <li>Acercá el DNI al encuadre verde hasta que el sistema lo detecte automáticamente.</li>
+      <li>Si el alumno está en el padrón, se agrega la tardanza de forma instantánea.</li>
+      <li>Para detener la cámara presioná <strong>⏹ Detener</strong>.</li>
+    </ol>
+    <div class="callout warn">
+      <span class="icon">⚠️</span>
+      <span><strong>La cámara solo funciona con HTTPS.</strong> Si abrís el archivo directamente como <code>file://</code>, la cámara estará bloqueada por el navegador. En ese caso usá el ingreso manual de DNI.</span>
+    </div>
+    <div class="callout tip">
+      <span class="icon">💡</span>
+      <span><strong>Ingreso manual de DNI:</strong> debajo del visor de cámara hay un campo de texto. Escribí el número de DNI y presioná <kbd>Enter</kbd> o el botón <strong>Buscar</strong> para encontrar al alumno sin necesidad de cámara.</span>
+    </div>
+  </div>
+
+  <!-- 4. Enviar -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Enviar el informe por WhatsApp o Email</h2>
+    </div>
+    <p>Una vez cargadas todas las tardanzas del día, podés compartir el informe:</p>
+
+    <div class="step-grid">
+      <div class="step-card">
+        <div class="sc-num">WhatsApp</div>
+        <div class="sc-title">📱 Enviar por WhatsApp</div>
+        <div class="sc-desc">Abre WhatsApp Web (o la app) con el mensaje ya redactado y formateado por curso. Solo tenés que elegir el grupo de la escuela y enviarlo.</div>
+      </div>
+      <div class="step-card">
+        <div class="sc-num">Email</div>
+        <div class="sc-title">📧 Enviar por Email</div>
+        <div class="sc-desc">Abre tu cliente de correo con el asunto y el cuerpo del mensaje ya completados. Solo tenés que agregar el destinatario y enviarlo.</div>
+      </div>
+    </div>
+
+    <ol>
+      <li>Presioná el botón de <strong>WhatsApp</strong> o <strong>Email</strong>.</li>
+      <li>Se muestra una vista previa del mensaje. Revisalo.</li>
+      <li>Presioná el botón de confirmación para abrirlo en la aplicación correspondiente.</li>
+      <li>El sistema guarda automáticamente los datos en Google Sheets al mismo tiempo.</li>
+    </ol>
+  </div>
+
+  <!-- 5. Sheets -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Google Sheets automático</h2>
+    </div>
+    <p>Cada vez que enviás el informe por WhatsApp o Email, el sistema guarda los datos automáticamente en la planilla de Google Sheets de la escuela.</p>
+    <ul>
+      <li>El guardado ocurre <strong>una sola vez por lista</strong>. Si enviás por WhatsApp y luego por Email en la misma sesión, no se duplican los registros.</li>
+      <li>Si limpias la lista y cargás tardanzas nuevas, al volver a enviar se guardará la nueva lista.</li>
+      <li>En la planilla cada fila contiene: Fecha, Nombre, DNI, Curso, Hora, Zona y Usuario que registró.</li>
+    </ul>
+    <div class="callout info">
+      <span class="icon">ℹ️</span>
+      <span>Si hay un error de conexión con Sheets (por ejemplo, sin internet), el informe igual se abre en WhatsApp o Email. Podés intentar el guardado en otro momento desde una sesión con conexión.</span>
+    </div>
+  </div>
+
+  <!-- 6. Usuarios -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Usuarios y contraseñas</h2>
+    </div>
+    <p>El sistema tiene usuarios predefinidos. Cada preceptora tiene su propio acceso:</p>
+
+    <table class="usersTable">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Contraseña</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>director</td><td class="mono">dir2024</td><td>Director/a</td></tr>
+        <tr><td>preceptora1</td><td class="mono">prec1</td><td>Preceptora 1</td></tr>
+        <tr><td>preceptora2</td><td class="mono">prec2</td><td>Preceptora 2</td></tr>
+        <tr><td>preceptora3</td><td class="mono">prec3</td><td>Preceptora 3</td></tr>
+        <tr><td>preceptora4–11</td><td class="mono">prec4 … prec11</td><td>Preceptora 4–11</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <span class="icon">🔒</span>
+      <span>Si necesitás cambiar una contraseña, hay que editar el archivo <code>index2.html</code> en la sección <code>const USERS</code> del script y volver a guardar/subir el archivo.</span>
+    </div>
+  </div>
+
+  <!-- 7. FAQ -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Preguntas frecuentes</h2>
+    </div>
+
+    <p><strong style="color:var(--text)">¿Puedo usar el sistema desde el celular?</strong></p>
+    <p>Sí. El sistema está optimizado para móviles. El escáner de cámara funciona especialmente bien desde el celular apuntando la cámara trasera al código de barras del DNI.</p>
+
+    <p><strong style="color:var(--text)">¿Los datos se pierden si cierro el navegador?</strong></p>
+    <p>Las tardanzas del día se guardan automáticamente en el navegador (localStorage). Si cerrás y volvés a abrir el mismo día, la lista se recupera. Al día siguiente la lista empieza vacía.</p>
+
+    <p><strong style="color:var(--text)">¿Qué pasa si agrego un alumno por error?</strong></p>
+    <p>Podés eliminarlo de la lista presionando el botón <strong>✕</strong> que aparece a la derecha de su nombre, antes de enviar el informe.</p>
+
+    <p><strong style="color:var(--text)">¿Puedo limpiar la lista y empezar de nuevo?</strong></p>
+    <p>Sí. El botón <strong>🗑 Limpiar lista</strong> elimina todos los registros del día. Se pedirá confirmación antes de borrar. Después de limpiar, el próximo envío guardará la nueva lista en Sheets.</p>
+
+    <p><strong style="color:var(--text)">El alumno no aparece en la búsqueda, ¿qué hago?</strong></p>
+    <p>El padrón de alumnos está cargado dentro del archivo. Si un alumno no aparece, puede que no esté en el listado o que haya un error en el nombre/DNI. Contactar al responsable del sistema para actualizar el padrón.</p>
+
+    <p><strong style="color:var(--text)">¿Se puede ver la planilla de Sheets desde acá?</strong></p>
+    <p>No directamente. Para ver los registros acumulados, ingresá a Google Sheets con la cuenta de la escuela. Cada fila representa una tardanza registrada con todos sus datos.</p>
+  </div>
+
+  <div class="footerHelp">
+    <p>Sistema de Control de Tardanzas · Escuela 4076 Arq. Carlos Thays</p>
+    <p style="margin-top:6px; color:var(--text3)">Para soporte técnico o actualización del padrón, contactar al administrador del sistema.</p>
+    <br>
+    <a href="index.html" class="btnVolver" style="display:inline-flex; margin:0 auto;">← Volver al inicio</a>
+  </div>
+
+</main>
+
+</body>
+</html>
