@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lector NFC — SUBE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #080f1a;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-x: hidden;
+  }
+
+  /* Fondo animado */
+  .bg-rings {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(59, 130, 246, 0.08);
+    animation: expand 4s ease-out infinite;
+  }
+  .ring:nth-child(1) { width: 200px; height: 200px; animation-delay: 0s; }
+  .ring:nth-child(2) { width: 340px; height: 340px; animation-delay: .8s; }
+  .ring:nth-child(3) { width: 480px; height: 480px; animation-delay: 1.6s; }
+  .ring:nth-child(4) { width: 620px; height: 620px; animation-delay: 2.4s; }
+
+  @keyframes expand {
+    0%   { opacity: 0; transform: scale(.7); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.1); }
+  }
+
+  .ring.active {
+    border-color: rgba(59, 130, 246, 0.25);
+    animation: expandActive 2s ease-out infinite;
+  }
+  @keyframes expandActive {
+    0%   { opacity: 0; transform: scale(.7); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.15); }
+  }
+
+  /* Card principal */
+  .card {
+    position: relative; z-index: 10;
+    background: rgba(13, 22, 38, 0.9);
+    border: 1px solid #1e3050;
+    border-radius: 28px;
+    padding: 44px 36px 40px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(59,130,246,.07);
+  }
+
+  /* Ícono NFC */
+  .nfc-wrap {
+    position: relative;
+    width: 110px; height: 110px;
+    margin: 0 auto 28px;
+  }
+
+  .nfc-bg {
+    width: 110px; height: 110px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    box-shadow: 0 12px 40px rgba(29,78,216,.4);
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s;
+  }
+
+  .nfc-bg::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(147,197,253,.2), transparent);
+    border-radius: 30px;
+  }
+
+  .nfc-bg.scanning {
+    animation: nfcBeat 1.5s ease-in-out infinite;
+    box-shadow: 0 12px 40px rgba(29,78,216,.6), 0 0 60px rgba(59,130,246,.3);
+  }
+
+  @keyframes nfcBeat {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.05); }
+  }
+
+  .nfc-dot {
+    position: absolute;
+    bottom: -4px; right: -4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 3px solid #080f1a;
+    background: #6b7280;
+    transition: background .3s;
+  }
+  .nfc-dot.on  { background: #22c55e; box-shadow: 0 0 10px rgba(34,197,94,.6); }
+  .nfc-dot.err { background: #ef4444; }
+
+  /* Título */
+  .badge {
+    display: inline-block;
+    background: rgba(29,78,216,.15);
+    border: 1px solid rgba(59,130,246,.3);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #93c5fd;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #f0f6ff;
+    letter-spacing: -.02em;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    font-size: 13.5px;
+    color: #4a6a9a;
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* Botón */
+  .btnMain {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .btnMain.start {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(29,78,216,.4);
+  }
+  .btnMain.start:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(29,78,216,.5); }
+  .btnMain.start:active { transform: translateY(0); }
+
+  .btnMain.stop {
+    background: rgba(239,68,68,.1);
+    border: 1px solid rgba(239,68,68,.25);
+    color: #f87171;
+  }
+  .btnMain.stop:hover { background: rgba(239,68,68,.18); }
+
+  /* Status */
+  .statusBox {
+    margin: 20px 0;
+    min-height: 20px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .statusBox.wait { color: #fbbf24; }
+  .statusBox.ok   { color: #4ade80; }
+  .statusBox.err  { color: #f87171; }
+  .statusBox.idle { color: #4a6a9a; }
+
+  /* Resultado UID */
+  .resultBox {
+    display: none;
+    background: rgba(29,78,216,.08);
+    border: 1px solid rgba(59,130,246,.2);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 16px 0;
+    animation: fadeUp .3s ease;
+  }
+  .resultBox.show { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .resultLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a6a9a;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: 8px;
+  }
+
+  .resultUid {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: #93c5fd;
+    letter-spacing: .04em;
+    word-break: break-all;
+    margin-bottom: 12px;
+  }
+
+  .resultMeta {
+    font-size: 12px;
+    color: #4a6a9a;
+    margin-bottom: 14px;
+  }
+
+  .btnCopy {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 9px;
+    border: 1px solid rgba(59,130,246,.3);
+    background: rgba(29,78,216,.1);
+    color: #93c5fd;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .btnCopy:hover { background: rgba(29,78,216,.2); border-color: rgba(59,130,246,.5); }
+  .btnCopy.copied { color: #4ade80; border-color: rgba(74,222,128,.3); background: rgba(74,222,128,.08); }
+
+  /* Historial */
+  .histSection { margin-top: 24px; text-align: left; }
+
+  .histHeader {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .histTitle {
+    font-size: 12px; font-weight: 700;
+    color: #4a6a9a; text-transform: uppercase; letter-spacing: .06em;
+  }
+
+  .btnClearHist {
+    font-size: 11px; color: #4a6a9a; background: none;
+    border: none; cursor: pointer; font-family: inherit;
+    transition: color .2s;
+  }
+  .btnClearHist:hover { color: #f87171; }
+
+  .histList { display: flex; flex-direction: column; gap: 6px; }
+
+  .histItem {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,.03);
+    border: 1px solid #1e3050;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .histItem:hover { background: rgba(29,78,216,.08); border-color: rgba(59,130,246,.25); }
+
+  .histUid {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; color: #93c5fd; font-weight: 500;
+  }
+  .histTime { font-size: 11px; color: #4a6a9a; }
+
+  .emptyHist {
+    text-align: center; color: #2a4060;
+    font-size: 13px; padding: 14px 0;
+  }
+
+  /* Aviso no soportado */
+  .noSupport {
+    display: none;
+    background: rgba(239,68,68,.08);
+    border: 1px solid rgba(239,68,68,.2);
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 13.5px;
+    color: #fca5a5;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .noSupport.show { display: block; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1e3050; border: 1px solid #2a4a7a;
+    color: #93c5fd; border-radius: 12px;
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    opacity: 0; transition: all .3s; z-index: 999; white-space: nowrap;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Anillos de fondo -->
+<div class="bg-rings" id="bgRings">
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="ring"></div>
+  <div class="ring"></div>
+</div>
+
+<div class="card">
+
+  <!-- Ícono -->
+  <div class="nfc-wrap">
+    <div class="nfc-bg" id="nfcIcon">📡</div>
+    <div class="nfc-dot" id="nfcDot"></div>
+  </div>
+
+  <div class="badge">Lector independiente</div>
+  <h1>Lector NFC</h1>
+  <p class="sub">Acercá la tarjeta SUBE para<br>leer su número único (UID)</p>
+
+  <!-- Aviso sin soporte -->
+  <div class="noSupport" id="noSupport">
+    ⚠️ <strong>NFC no disponible.</strong> Esta función requiere <strong>Chrome en Android</strong>. En iPhone o navegadores alternativos, el acceso a NFC está bloqueado por el sistema operativo.
+  </div>
+
+  <!-- Botones -->
+  <button class="btnMain start" id="btnStart" onclick="iniciar()">📡 Activar lector NFC</button>
+  <button class="btnMain stop" id="btnStop" onclick="detener()" style="display:none; margin-top:10px">⏹ Detener</button>
+
+  <!-- Estado -->
+  <div class="statusBox idle" id="statusBox">Lector inactivo</div>
+
+  <!-- Resultado -->
+  <div class="resultBox" id="resultBox">
+    <div class="resultLabel">UID leído</div>
+    <div class="resultUid" id="resultUid">—</div>
+    <div class="resultMeta" id="resultMeta"></div>
+    <button class="btnCopy" id="btnCopy" onclick="copiarUid()">📋 Copiar UID</button>
+  </div>
+
+  <!-- Historial -->
+  <div class="histSection">
+    <div class="histHeader">
+      <span class="histTitle">Lecturas recientes</span>
+      <button class="btnClearHist" onclick="limpiarHist()">Limpiar</button>
+    </div>
+    <div class="histList" id="histList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let nfcAbort = null;
+  let lastUid = null;
+  const HIST_KEY = 'nfc_hist';
+
+  // ── Historial ──
+  function getHist() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveHist(h) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(0, 20))); } catch(e) {}
+  }
+  function addToHist(uid) {
+    const h = getHist().filter(i => i.uid !== uid); // evitar duplicados consecutivos
+    h.unshift({ uid, ts: new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) });
+    saveHist(h);
+    renderHist();
+  }
+  function renderHist() {
+    const h = getHist();
+    const el = document.getElementById('histList');
+    if (!h.length) {
+      el.innerHTML = '<div class="emptyHist">Sin lecturas todavía</div>';
+      return;
+    }
+    el.innerHTML = h.map(i => `
+      <div class="histItem" onclick="usarUid('${i.uid}')" title="Clic para cargar">
+        <span class="histUid">${formatUid(i.uid)}</span>
+        <span class="histTime">${i.ts}</span>
+      </div>`).join('');
+  }
+  function limpiarHist() {
+    saveHist([]);
+    renderHist();
+    toast('Historial limpiado');
+  }
+
+  // ── Formato UID ──
+  function formatUid(raw) {
+    // Agrupar en bloques de 2 para legibilidad: AABBCCDD
+    return raw.match(/.{1,2}/g)?.join(':') || raw;
+  }
+
+  // ── NFC ──
+  async function iniciar() {
+    if (!('NDEFReader' in window)) {
+      document.getElementById('noSupport').classList.add('show');
+      setStatus('NFC no soportado en este dispositivo/navegador', 'err');
+      setDot('err');
+      return;
+    }
+
+    try {
+      nfcAbort = new AbortController();
+      const reader = new NDEFReader();
+      await reader.scan({ signal: nfcAbort.signal });
+
+      // UI activa
+      document.getElementById('btnStart').style.display = 'none';
+      document.getElementById('btnStop').style.display = '';
+      document.getElementById('nfcIcon').classList.add('scanning');
+      activarAnillos(true);
+      setDot('on');
+      setStatus('Esperando tarjeta SUBE...', 'wait');
+
+      reader.onreading = ({ serialNumber }) => {
+        const uid = serialNumber.toUpperCase().replace(/:/g, '');
+        mostrarResultado(uid);
+      };
+
+      reader.onreadingerror = () => {
+        setStatus('No se pudo leer la tarjeta. Intentá de nuevo.', 'err');
+      };
+
+    } catch(err) {
+      if (err.name === 'NotAllowedError') {
+        setStatus('Permiso NFC denegado. Habilitalo en Configuración → Chrome → Permisos.', 'err');
+      } else {
+        setStatus('Error: ' + err.message, 'err');
+      }
+      setDot('err');
+    }
+  }
+
+  function detener() {
+    if (nfcAbort) { nfcAbort.abort(); nfcAbort = null; }
+    document.getElementById('btnStart').style.display = '';
+    document.getElementById('btnStop').style.display = 'none';
+    document.getElementById('nfcIcon').classList.remove('scanning');
+    activarAnillos(false);
+    setDot('');
+    setStatus('Lector inactivo', 'idle');
+  }
+
+  function mostrarResultado(uid) {
+    lastUid = uid;
+    const box = document.getElementById('resultBox');
+    document.getElementById('resultUid').textContent = formatUid(uid);
+    document.getElementById('resultMeta').textContent =
+      'Raw: ' + uid + '  ·  ' + uid.length / 2 + ' bytes  ·  ' +
+      new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    document.getElementById('btnCopy').textContent = '📋 Copiar UID';
+    document.getElementById('btnCopy').classList.remove('copied');
+    box.classList.add('show');
+    setStatus('✓ Tarjeta leída correctamente', 'ok');
+    addToHist(uid);
+  }
+
+  function usarUid(uid) {
+    mostrarResultado(uid);
+    toast('UID cargado desde historial');
+  }
+
+  // ── Copiar ──
+  function copiarUid() {
+    if (!lastUid) return;
+    navigator.clipboard.writeText(lastUid).then(() => {
+      const btn = document.getElementById('btnCopy');
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      toast('UID copiado al portapapeles');
+      setTimeout(() => {
+        btn.textContent = '📋 Copiar UID';
+        btn.classList.remove('copied');
+      }, 2500);
+    }).catch(() => toast('No se pudo copiar'));
+  }
+
+  // ── Helpers UI ──
+  function setStatus(msg, type) {
+    const el = document.getElementById('statusBox');
+    el.textContent = msg;
+    el.className = 'statusBox ' + type;
+  }
+
+  function setDot(state) {
+    const el = document.getElementById('nfcDot');
+    el.className = 'nfc-dot ' + state;
+  }
+
+  function activarAnillos(on) {
+    document.querySelectorAll('.ring').forEach(r =>
+      r.classList.toggle('active', on));
+  }
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  // ── Init ──
+  renderHist();
+
+  // Verificar soporte al cargar
+  if (!('NDEFReader' in window)) {
+    document.getElementById('noSupport').classList.add('show');
+  }
+</script>
+</body>
+</html>
