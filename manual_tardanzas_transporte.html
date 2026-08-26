@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Uso — Sistema de Registro de Tardanzas</title>
+<style>
+  :root {
+    --bg: #1a2e20;
+    --surface: #223a29;
+    --surface2: #2c4633;
+    --border: #3a5c44;
+    --accent: #4caf6e;
+    --accent2: #3d9a5c;
+    --text: #f4fdf6;
+    --text2: #a8cdb4;
+    --text3: #7a9c85;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  header {
+    text-align: center;
+    padding: 32px 20px 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  header h1 { font-size: 28px; margin: 0 0 8px; }
+  header p { color: var(--text2); margin: 0; font-size: 15px; }
+  .badge {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 14px;
+  }
+  nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+  }
+  nav h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin: 0 0 12px; }
+  nav ol { margin: 0; padding-left: 20px; }
+  nav li { margin-bottom: 6px; }
+  nav a { color: var(--accent); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+
+  section { margin-bottom: 44px; }
+  h2 {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 18px;
+  }
+  h2 .num {
+    background: var(--accent);
+    color: #0b1a0e;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  h3 { font-size: 16px; color: var(--accent); margin: 20px 0 8px; }
+  p { color: var(--text); margin: 0 0 12px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .step-list { list-style: none; margin: 0; padding: 0; }
+  .step-list li {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list .n {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-list .txt strong { color: var(--text); }
+  .step-list .txt span { color: var(--text2); font-size: 14px; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th { background: var(--surface2); color: var(--text2); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+
+  .btn-demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+  }
+  .btn-demo.on { background: var(--accent2); border-color: var(--accent); color: var(--text); }
+  .btn-demo.wa { background: #1f7a4a; border-color: #1f7a4a; color: #fff; }
+  .btn-demo.mail { background: #2b6ea8; border-color: #2b6ea8; color: #fff; }
+
+  .note {
+    display: flex;
+    gap: 12px;
+    background: var(--surface2);
+    border-left: 4px solid var(--accent);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+  }
+  .note.warn { border-left-color: #f59e0b; }
+  .note .icon { font-size: 20px; flex-shrink: 0; }
+  .note p { margin: 0; font-size: 14px; color: var(--text2); }
+
+  code, .code-inline {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .faq-item { margin-bottom: 16px; }
+  .faq-item .q { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .faq-item .a { color: var(--text2); font-size: 14px; }
+
+  footer {
+    text-align: center;
+    color: var(--text3);
+    font-size: 13px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>📋 Sistema de Registro de Tardanzas</h1>
+    <p>Manual de uso — Preceptoría</p>
+    <span class="badge">Versión con Transporte Escolar</span>
+  </header>
+
+  <nav>
+    <h2>Contenido</h2>
+    <ol>
+      <li><a href="#intro">¿Qué hace el sistema?</a></li>
+      <li><a href="#login">Iniciar sesión</a></li>
+      <li><a href="#sync">Sincronizar el padrón de alumnos</a></li>
+      <li><a href="#buscar">Buscar y agregar un alumno</a></li>
+      <li><a href="#transporte">Marcar transporte escolar</a></li>
+      <li><a href="#lista">La lista de tardanzas del día</a></li>
+      <li><a href="#enviar">Enviar por WhatsApp o Email</a></li>
+      <li><a href="#sheets">Guardado en la planilla de cálculo</a></li>
+      <li><a href="#faq">Preguntas frecuentes</a></li>
+    </ol>
+  </nav>
+
+  <section id="intro">
+    <h2><span class="num">1</span> ¿Qué hace el sistema?</h2>
+    <p>Esta herramienta permite registrar, en el momento, a los alumnos que llegan tarde a clase. Por cada alumno se guarda su nombre, curso, hora de llegada y si usó <strong>transporte escolar</strong>. Al final, la lista se puede enviar por WhatsApp o Email a quien corresponda, y queda guardada automáticamente en la planilla de cálculo del colegio.</p>
+  </section>
+
+  <section id="login">
+    <h2><span class="num">2</span> Iniciar sesión</h2>
+    <ul class="step-list">
+      <li>
+        <div class="n">1</div>
+        <div class="txt"><strong>Elegí tu usuario</strong><br><span>Directivos, Preceptoría Turno Mañana o Preceptoría Turno Tarde.</span></div>
+      </li>
+      <li>
+        <div class="n">2</div>
+        <div class="txt"><strong>Ingresá la contraseña</strong><br><span>La misma que te haya entregado la institución.</span></div>
+      </li>
+      <li>
+        <div class="n">3</div>
+        <div class="txt"><strong>Presioná "Ingresar"</strong><br><span>La sesión queda activa hasta que cierres sesión o pase el tiempo de inactividad configurado.</span></div>
+      </li>
+    </ul>
+    <div class="note warn">
+      <div class="icon">⚠️</div>
+      <p>Si te equivocás de contraseña varias veces, revisá mayúsculas y espacios. Si el problema persiste, consultá con quien administra el sistema.</p>
+    </div>
+  </section>
+
+  <section id="sync">
+    <h2><span class="num">3</span> Sincronizar el padrón de alumnos</h2>
+    <p>El sistema trae la lista de alumnos desde la planilla de cálculo. Al ingresar, se sincroniza automáticamente. Si necesitás forzar una actualización (por ejemplo, si se agregó un alumno nuevo hoy), usá el botón <span class="code-inline">↻ Actualizar padrón</span> en la parte superior.</p>
+    <div class="card">
+      <p style="margin:0"><strong>🟢 Punto verde:</strong> padrón sincronizado correctamente.<br>
+      <strong>🟡 Punto amarillo:</strong> sincronizando o usando datos guardados (caché) por no tener conexión.<br>
+      <strong>🔴 Punto rojo:</strong> no hay padrón cargado — se necesita conexión para la primera sincronización.</p>
+    </div>
+  </section>
+
+  <section id="buscar">
+    <h2><span class="num">4</span> Buscar y agregar un alumno</h2>
+    <ul class="step-list">
+      <li>
+        <div class="n">1</div>
+        <div class="txt"><strong>Buscá por nombre o por DNI</strong><br><span>Escribí al menos 2 letras del nombre, o 3 números del DNI, y aparecerán coincidencias.</span></div>
+      </li>
+      <li>
+        <div class="n">2</div>
+        <div class="txt"><strong>Tocá la tarjeta del alumno</strong><br><span>Se agrega automáticamente a la lista de tardanzas del día, con la hora exacta del registro.</span></div>
+      </li>
+      <li>
+        <div class="n">3</div>
+        <div class="txt"><strong>Alumno ya agregado</strong><br><span>Si el alumno ya está en la lista de hoy, su tarjeta se muestra marcada con un ✓ y no se puede volver a agregar.</span></div>
+      </li>
+    </ul>
+    <div class="note">
+      <div class="icon">💡</div>
+      <p>También podés escanear el DNI del alumno con la cámara si tu dispositivo lo permite, usando la opción de escaneo.</p>
+    </div>
+  </section>
+
+  <section id="transporte">
+    <h2><span class="num">5</span> Marcar transporte escolar</h2>
+    <p>Apenas agregás un alumno a la lista, aparece a su lado un botón de transporte escolar:</p>
+    <div class="grid2">
+      <div class="card" style="text-align:center">
+        <span class="btn-demo">🚌 No</span>
+        <p style="margin-top:10px; font-size:13px">Estado inicial por defecto</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <span class="btn-demo on">🚌 Sí</span>
+        <p style="margin-top:10px; font-size:13px">Después de tocarlo una vez</p>
+      </div>
+    </div>
+    <p style="margin-top:14px">Tocá el botón <strong>tantas veces como sea necesario</strong> para alternar entre "Sí" y "No" — no hace falta confirmar nada, el cambio se guarda al instante.</p>
+  </section>
+
+  <section id="lista">
+    <h2><span class="num">6</span> La lista de tardanzas del día</h2>
+    <p>Todos los alumnos agregados aparecen en una lista con:</p>
+    <table>
+      <tr><th>Dato</th><th>Descripción</th></tr>
+      <tr><td>Nombre y curso</td><td>Tal como figuran en el padrón</td></tr>
+      <tr><td>DNI</td><td>Documento del alumno</td></tr>
+      <tr><td>Transporte 🚌</td><td>Sí / No — se puede tocar para cambiar</td></tr>
+      <tr><td>Hora</td><td>Hora en que se registró la tardanza</td></tr>
+      <tr><td>✕</td><td>Quita al alumno de la lista</td></tr>
+    </table>
+    <div class="note warn">
+      <div class="icon">🗑</div>
+      <p>El botón <strong>"Limpiar lista"</strong> borra todos los registros del día actual. Pide confirmación antes de hacerlo — usalo solo si empezaste una lista por error.</p>
+    </div>
+  </section>
+
+  <section id="enviar">
+    <h2><span class="num">7</span> Enviar por WhatsApp o Email</h2>
+    <p>Una vez cargados los alumnos del día, usá los botones de la parte inferior:</p>
+    <p>
+      <span class="btn-demo wa">📱 Enviar por WhatsApp</span>
+      &nbsp;&nbsp;
+      <span class="btn-demo mail">📧 Enviar por Email</span>
+    </p>
+    <ul class="step-list">
+      <li>
+        <div class="n">1</div>
+        <div class="txt"><strong>Se abre una vista previa</strong><br><span>Mostrando el mensaje agrupado por curso, con cada alumno, su hora y si usó transporte escolar.</span></div>
+      </li>
+      <li>
+        <div class="n">2</div>
+        <div class="txt"><strong>Confirmá el envío</strong><br><span>Se abre WhatsApp o tu app de correo con el mensaje ya armado, listo para mandar al destinatario.</span></div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="sheets">
+    <h2><span class="num">8</span> Guardado en la planilla de cálculo</h2>
+    <p>Al confirmar el envío, el sistema también guarda automáticamente los registros nuevos en la planilla de cálculo del colegio. No hace falta hacer nada extra: si hay conexión, el guardado ocurre solo.</p>
+    <div class="note">
+      <div class="icon">✅</div>
+      <p><strong>Envío inteligente:</strong> si ya enviaste una lista y después agregás un alumno nuevo, el próximo envío sube <em>solo</em> el alumno nuevo — no vuelve a duplicar los que ya estaban guardados.</p>
+    </div>
+    <div class="note">
+      <div class="icon">🚌</div>
+      <p>El dato de <strong>transporte escolar (Sí/No)</strong> se guarda en la misma columna que antes usaba la "zona" del alumno en la planilla.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2><span class="num">9</span> Preguntas frecuentes</h2>
+    <div class="faq-item">
+      <div class="q">¿Qué pasa si no tengo conexión a internet?</div>
+      <div class="a">Podés seguir registrando tardanzas con el padrón que ya esté guardado en el dispositivo. El envío a la planilla y por WhatsApp/Email va a fallar hasta que vuelva la conexión.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">¿Puedo cambiar el estado de transporte después de haber enviado la lista?</div>
+      <div class="a">Sí, el botón sigue funcionando. Tené en cuenta que si ese alumno ya fue enviado a la planilla, el cambio no se va a reflejar ahí a menos que se vuelva a enviar.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">¿Se puede agregar el mismo alumno dos veces en el mismo día?</div>
+      <div class="a">No, el sistema lo detecta automáticamente y no permite duplicados dentro del mismo día.</div>
+    </div>
+    <div class="faq-item">
+      <div class="q">¿La lista se borra sola al día siguiente?</div>
+      <div class="a">Sí, cada día arranca con una lista nueva y vacía. Los registros de días anteriores quedan guardados en la planilla de cálculo.</div>
+    </div>
+  </section>
+
+  <footer>
+    Sistema de Registro de Tardanzas · Versión con Transporte Escolar
+  </footer>
+
+</div>
+</body>
+</html>
